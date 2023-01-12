@@ -1,0 +1,95 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Sessions
+{% endblock %}
+
+{% block main %}
+    {% if not no_res %}
+        {% if gm_sessions %}
+            <h2>GM sessions</h2>
+            <div class="table-responsive mt-3 w-100">
+                <table class="table table-light table-borderless">
+                    <thead>
+                        <tr>
+                            {% for key in gm_sessions[0] %}
+                                <th scope="col">{{key}}</th>
+                            {% endfor %}
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in gm_sessions %}
+                            <tr>
+                                {% for key in row %}
+                                    {% if row[key]|length < 45 %}
+                                        <td scope="row">{{row[key]}}</td>
+                                    {% else %}
+                                        <td scope="row">{{row[key][0:41]}}...</td>
+                                    {% endif %}
+                                {% endfor %}
+                                <td scope="row">
+                                    <form class="inline" action="/sessions/" method="post">
+                                        <input type="hidden" name="decision" value="start">
+                                        <input type="hidden" name="session_name" value="{{row['Session name']}}">
+                                        <button class="btn btn-primary" type="submit">Start</button>
+                                    </form>
+                                    <form class="inline" action="/sessions/" method="post">
+                                        <input type="hidden" name="decision" value="end">
+                                        <input type="hidden" name="session_name" value="{{row['Session name']}}">
+                                        <button class="btn btn-primary" type="submit">End</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+        {% if player_sessions %}
+            <h2>Player sessions</h2>
+            <div class="table-responsive mt-3">
+                <table class="table table-light table-borderless">
+                    <thead>
+                        <tr>
+                            {% for key in player_sessions[0] %}
+                                <th scope="col">{{key}}</th>
+                            {% endfor %}
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set count = namespace(value=0) %}
+                        {% for row in player_sessions %}
+                            <tr>
+                                {% for key in row %}
+                                    <td scope="row">{{row[key]}}</td>
+                                {% endfor %}
+                                {% set count.value = count.value + 1 %}
+                                {% if row['Level'] != 1 %}
+                                    <script>document.getElementById('edit_'+{{count.value}}).disabled = true;</script>
+                                {% endif %}
+                                <td scope="row">
+                                    <form class="inline" action="/sessions/" method="post">
+                                        <input type="hidden" name="decision" value="create">
+                                        <input type="hidden" name="session_name" value="{{row['Session name']}}">
+                                        <button id="edit_{{count.value}}" class="btn btn-primary" type="submit">Create character</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    {% else %}
+    <div>
+        <p>{{no_res}}</p>
+    </div>
+    {% endif %}
+    <form action="/sessions/new" method="get">
+        <div class="mb3">
+            <button class="btn btn-primary" type="submit">New session</button>
+        </div>
+    </form>
+{% endblock %}

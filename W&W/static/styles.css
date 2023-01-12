@@ -1,0 +1,186 @@
+/* Size for brand */
+nav .navbar-brand
+{
+    font-size: xx-large;
+}
+
+/* Colors for brand */
+nav .navbar-brand .blue
+{
+    color: #537fbe;
+}
+nav .navbar-brand .red
+{
+    color: #ea433b;
+}
+nav .navbar-brand .yellow
+{
+    color: #f5b82e;
+}
+nav .navbar-brand .green
+{
+    color: #2e944b;
+}
+
+.description
+{
+    margin: 20px auto;
+    width: 30%;
+}
+
+#error
+{
+    color: red;
+}
+
+.left
+{
+    text-align: left;
+    margin-left: 5%;
+}
+tr.sessions > td
+{
+    max-width: 40%;
+}
+
+.inline
+{
+    display: inline-block;
+}
+.creation_form
+{
+    padding: 20px auto;
+    width: 90%;
+}
+.char_text:
+{
+    margin: 10px 0;
+}
+.char_text p
+{
+    text-align: left;
+}
+.mb3
+{
+    margin: 10px auto;
+    width: 40%;
+}
+.mb3 > h3
+{
+    padding: 10px 0 20px 0;
+}
+
+/* Session_play, player */
+#player_info
+{
+    border-right: 2px solid black;
+    padding: 10px 15px 20px 0;
+}
+.main_params{
+    text-align: left;
+    padding: 0 5%;
+}
+.param
+{
+    color: red;
+    font-weight: 500;
+}
+.modifier
+{
+    color: dimgray;
+}
+
+.hp
+{
+    text-align: center;
+    width: 30%;
+    line-height: 70%;
+}
+
+.card-footer > p
+{
+    line-height: 70%;
+}
+.card-body
+{
+    text-align: left;
+}
+.member
+{
+    color: dimgray;
+    opacity: 40%;
+    margin-bottom: 5%;
+}
+.stop
+{
+    height: 20px;
+    padding-right: 5%;
+}
+/* Hide info elements */
+.p_ids
+{
+    display: none;
+}
+.p_names
+{
+    display: none;
+}
+#session_name
+{
+    display: none;
+}
+#player_id
+{
+    display: none;
+}
+#role
+{
+    display: none;
+}
+#log
+{
+    margin: 5%;
+    height: 200px;
+    padding: 5% 0 5% 10%;
+    text-align: left;
+    overflow: scroll;
+    border: 2px solid black;
+}
+
+/*Session play, gm*/
+
+.levelup
+{
+    display: inline-block;
+    margin-left: 5%;
+}
+.num
+{
+    width: 30%
+}
+.btn_red
+{
+    background-color: #f24e4e;
+}
+.btn_green
+{
+    background-color: #84cf63;
+}
+
+/* Homepage */
+
+#home_info
+{
+    width: 80%;
+    margin: 5% auto;
+}
+#home_info > p
+{
+    text-align: left;
+    padding: 10px 0;
+    text-indent: 5%;
+}
+#intro
+{
+    font-size: 20px;
+}
