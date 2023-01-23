@@ -56,7 +56,7 @@ def entry(request, title):
     
     # HTML substitution for links
     sub = r"<a href='\2'>\1</a>"
-    entry = re.sub(r"\[(\w+)\]\(([\w/]*)\)", sub, entry, 0, re.MULTILINE)
+    entry = re.sub(r"\[([\w\s]+)\]\(([\w/]*)\)", sub, entry, 0, re.MULTILINE)
 
     # HTML substitution for bold
     entry = re.sub(r"\*\*([^*]+)\*\*", r"<b>\1</b>", entry, 0)
