@@ -49,7 +49,7 @@ def entry(request, title):
         }, status=404)
     # Regexes built using https://regex101.com/
     # HTML Substitutions for headings
-    pattern = r"^#(\s*[\w&]+)"
+    pattern = r"^#(\s*.+)$"
     for i in range(1,7):
         h = pattern.replace("#", "#"*i)
         entry = re.sub(h, r"<h1>\1</h1>".replace("h1", f"h{i}"), entry, 0, re.MULTILINE)
