@@ -54,6 +54,14 @@ HITS = {'willpower': {'hit dice': 'd10', 'hp_1': 10, 'hp_after': 6},
     'technique': {'hit dice': 'd6', 'hp_1': 6, 'hp_after': 4},
     'intellect': {'hit dice': 'd8', 'hp_1': 8, 'hp_after': 5}}
 
+# Skills
+SKILLS = {'willpower': ['Athletics', 'Deception', 'Intimidation', 'Magical Theory',
+    'Persuasion', 'Sleight of Hand', 'Survival'],
+    'technique': ['Acrobatics', 'Herbology', 'Insight', 'Perception', 'Potion Making',
+    'Sleight of Hand', 'Stealth'],
+    'intellect': ['Acrobatics', 'Herbology', 'Insight', 'Investigation', 'Magical Creatures',
+    'Magical Theory', 'Medicine', 'Muggle Studies', 'Survival']}
+
 # Get messages
 def get_invites():
     try:
