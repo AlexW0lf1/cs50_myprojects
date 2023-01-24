@@ -1,0 +1,88 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    New character
+{% endblock %}
+
+{% block main %}
+    <div class="row">
+        <div id="left" class="col-md-2"></div>
+        <div id="mid" class="col-md-8">
+            <h2>Create your character</h2>
+            <div class="creation_form">
+                <form action="/sessions/session/{{session_name}}/character/{{user_id}}" method="post">
+                    <div class="mb3">
+                        <h3>Character name</h3>
+                        <input autofocus autocomplete="off" class="form-control mx-auto w-auto" name="character_name" type="text" placeholder="Name" required>
+                    </div>
+                    <div class="mb3">
+                        <h3>Your house</h3>
+                        <select onchange="get_house(event); add_points(event);" autofocus name="house" class="form-select">
+                            <option selected disabled value="House">House</option>
+                            {% for house in houses %}
+                                <option value="{{house|lower}}">{{house}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="char_text" id="house"></div>
+                    <div class="mb3">
+                        <h3>Casting style</h3>
+                        <select onchange="get_style(event);" autofocus name="style" class="form-select">
+                            <option selected disabled value="">Style</option>
+                            {% for style in styles %}
+                                <option value="{{style|lower}}">{{style}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="char_text" id="style"></div>
+                    <div class="mb3">
+                        <h3>Favorite school of magic</h3>
+                        <select onchange="get_discipline(event);" autofocus name="discipline" class="form-select">
+                            <option selected disabled value="">Discipline</option>
+                            {% for discipline in disciplines %}
+                                <option value="{{discipline|lower}}">{{discipline}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="char_text" id="discipline"></div>
+                    <div class="mb3">
+                        <h3>Background</h3>
+                        <select onchange="get_bg(event);" autofocus name="background" class="form-select">
+                            <option selected disabled value="">Background</option>
+                            {% for background in backgrounds %}
+                                <option value="{{background|lower}}">{{background}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="char_text" id="bg"></div>
+                    <div class="mb3">
+                        <h4>Add +1 to any ability score of your choice</h4>
+                        <select onchange="get_addition(event);" autofocus name="addition" class="form-select">
+                            <option selected disabled value="">Ability</option>
+                            {% for ability in abilities %}
+                                <option value="{{ability}}">{{ability}}</option>
+                            {% endfor %}
+                        </select>
+                        <input id="add_score" type="hidden" name="add_score" value=''>
+                    </div>
+
+                    <div class="stats">
+                        {% for ability in abilities %}
+                            <p><span>{{ability}}: </span><input class="abl" onchange="count_points(event);" type="number" name="{{ability[0:3]}}" value="8" min="8" max="15">
+                                <span id="{{ability}}" class="transparent"></span><input id="add_{{ability[0:3]}}" type="hidden" name="add_{{ability[0:3]}}" value="0">
+                            </p>
+                        {% endfor %}
+                        <p>Points left: <span id="remaining">27</span></p>
+                        <p id="addition_value"></p>
+                        <p id="error"></p>
+                    </div>
+
+                    <input type="hidden" name="session_name" value="{{session_name}}">
+                    <button disabled id="sub" class="btn btn-primary" type="submit">Save changes</button>
+                </form>
+            </div>
+        </div>
+        <div id="right" class="col-md-2"></div>
+    </div>
+
+{% endblock %}

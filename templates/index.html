@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block main %}
+    <div id="home_info">
+        <h2>Welcome to Wands and Wizards app v.0!</h2>
+        <h4>Introduction</h4>
+        <p id="intro">
+            If you are a fan of both Dungeons & Dragons and Harry Potter, we present to you Wands & Wizards, a Harry Potter 5e Adaptation created by <a href="https://www.gmbinder.com/profile/murphen44">Murphen44</a>.
+            Joining the magic of the Wizarding World with the gameplay of D&D 5e, this comprehensive Wizarding Alternative for Novelty Dungeoneering Stories (or W.A.N.D.S.) Rulebook substitutes 5e races, classes, subclasses,
+            backgrounds, feats, skills, equipment, and spells. Like the 5e PHB, Part 1 of the W.A.N.D.S. Rulebook contains new character creation options. Part 2 focuses on the changes made to spellcasting and all of the new
+            spells from the Harry Potter series. If you are unfamiliar with any of the Harry Potter references, please review the Glossary at the end of the W.A.N.D.S. Rulebook.
+        </p>
+        <h4>How to play</h4>
+        <p>
+            You can create a new session following <a href="/sessions/">Your sessions</a>, or join any existing one at <a href="/join">Join</a>.
+            Be sure to check <a href="/rulebook">Rulebook</a>, here or at <a href="https://www.gmbinder.com/profile/murphen44">Murphen44 page</a>,
+            to learn basic game features. Ratings are not implemented in v.0.
+        </p>
+        <p>
+            When creating new session, you can add players to it using their usernames. If you don't know any yet - don't worry,
+            Your session will appear at <a href="/join">Join</a> and anyone would be able to send you request to join your session.
+            Once you created your session, you become a GM (Game Master), which means that you lead the session. Session will appear at Your sessions -> GM sessions.
+            When you have at least 2 players in your session, you might start session. Players will get notifications that session is started.
+        </p>
+        <p>
+            If you joined session as player, you need to create your character. Find session at Sessions -> Player sessions and you will see list
+            of sessions you joined as player. To create your character, use "Create character" button.
+        </p>
+        <p>
+            Once you were redirected to Create character page, you will see bunch of parameters to choose, You can read <a href="/rulebook">Rulebook</a>
+            For better understanding. However, once you chosen one of the options, you will see description with the most important information about it.
+            You can collaborate with your GM on your character creation!
+        </p>
+        <p>
+            There is no voice chat in W&W app v.0, so you and your party may use whatever you like, because W&W sessions require
+            verbal communications (especially in v.0).
+        </p>
+        <h4>Implemented features v.0</h4>
+        <p>
+            Gm can level up characters, do damage or heal (all enemies and skills are not implemented, GM still needs to keep info about them on paper).
+            Players will see all that events in log window, under cards with character's info. Damage and heal buttons affect health, Level up button affects
+            level and health. Read rulebook to see formula(depends on character's Casting style).
+        </p>
+    </div>
+
+{% endblock %}

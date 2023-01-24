@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    New session
+{% endblock %}
+
+{% block main %}
+    <h2>New session</h2>
+    <form action="/sessions/new" method="post">
+        <div class="description">
+            <input required autocomplete="off" autofocus class="form-control mx-auto w-auto" name="session_name" placeholder="Session name" type="text">
+        </div>
+        <div class="description">
+            <p>Add a description which contains:</p>
+            <ul class="left">
+                <li>Time period</li>
+                <li>Wizarding school/country</li>
+                <li>Any details you want to add</li>
+            </ul>
+            <textarea class="form-control" rows="5" name="description" placeholder="Description"></textarea>
+        </div>
+        <div class="description">
+            <p>Input players you want to invite (separated by commas)</p>
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="invites" placeholder="Invite players" type="text">
+        </div>
+        <button class="btn btn-primary" type="submit">Create</button>
+    </form>
+{% endblock %}

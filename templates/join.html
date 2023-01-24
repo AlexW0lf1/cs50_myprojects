@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Sessions
+{% endblock %}
+
+{% block main %}
+    {% if not no_res %}
+        {% if other_sessions %}
+            <h2>Sessions</h2>
+            <p>If you want to join any session, send request to GM</p>
+            <div class="table-responsive mt-3 w-100">
+                <table class="table table-light table-borderless">
+                    <thead>
+                        <tr>
+                            {% for key in other_sessions[0] %}
+                                <th scope="col">{{key}}</th>
+                            {% endfor %}
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in other_sessions %}
+                            <tr>
+                                {% for key in row %}
+                                    {% if row[key]|length < 45 %}
+                                        <td scope="row">{{row[key]}}</td>
+                                    {% else %}
+                                        <td scope="row">{{row[key][0:41]}}...</td>
+                                    {% endif %}
+                                {% endfor %}
+                                <td scope="row">
+                                    <form class="inline" action="/join" method="post">
+                                        <input type="hidden" name="decision" value="ask">
+                                        <input type="hidden" name="session_name" value="{{row['Session name']}}">
+                                        <button class="btn btn-primary" type="submit">Send request</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+        {% if player_sessions %}
+            <h2>Player sessions</h2>
+            <div class="table-responsive mt-3">
+                <table class="table table-light table-borderless">
+                    <thead>
+                        <tr>
+                            {% for key in player_sessions[0] %}
+                                <th scope="col">{{key}}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in player_sessions %}
+                            <tr>
+                                {% for key in row %}
+                                    <td scope="row">{{row[key]}}</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    {% else %}
+    <div>
+        <p>{{no_res}}</p>
+    </div>
+    {% endif %}
+{% endblock %}

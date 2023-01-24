@@ -1,0 +1,258 @@
+{% extends "layout.html" %}
+{% block script %}
+<script src="/static/session.js"></script>
+{% endblock %}
+{% block title %}
+    {{session_name}}
+{% endblock %}
+
+{% block main %}
+    <div id="session_name">{{session_name}}</div>
+    <div id="player_id">{{user_id}}</div>
+    <div id="role">{{role}}</div>
+    <div class="container-fluid" style="width: 85%;">
+        {% if role == 'player' %}
+        <div class="row" style="height: 100px;">
+            <div class="col-md-4">
+                <h2 class="member">Session: {{session_name}}</h2>
+            </div>
+            <div class="col-md-4">
+                {% if stop == 1 %}
+                <form id="stop" action="/sessions/session/{{session_name}}" method="post">
+                    <input type="hidden" name="decision" value="leave">
+                    <p class="stop inline">Session is stopped</p>
+                    <button class="btn btn-primary" type="submit">Leave</button>
+                </form>
+                {% endif %}
+            </div>
+            <div class="col-md-4">
+                <h2 class="member">GM: {{gm}}</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <h2 class="member">You</h2>
+            </div>
+            <div class="col-md-8">
+                <h2 class="member">Party</h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <div id="player_info" class="col-md-4">
+                {% for row in players %}
+                    {% if row["player_id"] == user_id %}
+                        <h4 id="u_name">{{row["Name"]}}</h4>
+                        <div class="main_params">
+                            <p class="character_param"><span class="param">Level</span>: <span id="my_lvl">{{row["Level"]}}</span></p>
+                            <div class="hp">
+                                <p>Hp / Max Hp</p>
+                                {% for key in hits %}
+                                    {% if row["Casting Style"] == key %}
+                                        <!-- Need to find stat row by player_id -->
+                                        {% for stat in stats %}
+                                        {% if stat["player_id"] == user_id %}
+                                        {% set hp = hits[key]['hp_1'] + scores[stat['Constitution']] + (row["Level"] - 1)*(hits[key]['hp_after'] + scores[stat['Constitution']]) %}
+                                        {% set cur_hp = stat['cur_hp'] %}
+                                        <p><span id="my_cur_hp">{{cur_hp}}</span>/<span id="my_max_hp">{{hp}}</span></p>
+                                        {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            {% for key in row %}
+                                {% if key != "player_id" and key != "Name" and key != "Level"  %}
+                                    <p class="character_param"><span class="param">{{key}}</span>: {{row[key][0]|upper}}{{row[key][1:row[key]|length]}}</p>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                {% for row in stats %}
+                    {% if row["player_id"] == user_id %}
+                        <h4>Abilities</h4>
+                        <div class="stats">
+                            {% for key in row %}
+                                {% if key != 'player_id' and key != 'cur_hp' %}
+                                    <p class="main_params"><span class="param">{{key}}</span>: {{row[key]}} <span class="modifier">(mod: {{scores[row[key]]}})</span> </p>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+
+            </div>
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-12">
+                    </div>
+                </div>
+                {% set count = namespace(value=0) %}
+                {% for row in players %}
+                    {% if row["player_id"] != user_id %}
+                        <!--Remember player_id-->
+                        {% set p_id = row["player_id"] %}
+                        <!-- Check if player created character -->
+                        {% if row["House"] %}
+                            {% set count.value = count.value + 1 %}
+                            {% if count.value % 3 == 1 %}
+                                <div class="row">
+                            {% endif %}
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="p_ids">
+                                        <p>{{row["player_id"]}}</p>
+                                        <p>{{row["Name"]}}</p>
+                                    </div>
+                                    <h5 class="card-header">
+                                        {{row['Name']}}
+                                    </h5>
+                                    <p class="card-text">
+                                        <span class="param">Level</span>: <span id="lvl_{{p_id}}">{{row["Level"]}}</span>
+                                    </p>
+                                    <div class="card-body">
+
+                                        {% for key in row %}
+                                            {% if key != "player_id" and key != "Name" and key != "Level"  %}
+                                                <p class="card-text"><span class="param">{{key}}</span>: {{row[key][0]|upper}}{{row[key][1:row[key]|length]}}</p>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <div class="card-footer">
+
+                                        <p>Hp / Max Hp</p>
+                                        {% for key in hits %}
+                                            {% if row["Casting Style"] == key %}
+                                                <!-- Need to find stat row by player_id -->
+                                                {% for stat in stats %}
+                                                {% if stat["player_id"] == p_id %}
+                                                {% set hp = hits[key]['hp_1'] + scores[stat['Constitution']] + (row["Level"] - 1)*(hits[key]['hp_after'] + scores[stat['Constitution']]) %}
+                                                {% set cur_hp = stat['cur_hp'] %}
+                                                <p><span id="cur_hp_{{p_id}}">{{cur_hp}}</span>/<span id="max_hp_{{p_id}}">{{hp}}</span></p>
+                                                {% endif %}
+                                                {% endfor %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% if count.value % 3 == 0 %}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+                {% if count.value < 3 %}
+                    </div>
+                {% endif %}
+                <div class="row">
+                    <div id="log" class="col-md-12">
+                        <p></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    {% if role == 'gm' %}
+        <div class="row" style="height: 100px;">
+            <div class="col-md-3"></div>
+            <div class="col-md-6">
+                <h2 class="member">GM mode: {{session_name}}</h2>
+            </div>
+            <div class="col-md-3">
+                <form id="stop" action="/sessions/session/{{session_name}}" class="inline" method="post">
+                    <input type="hidden" name="session_name" value="{{session_name}}">
+                    <input type="hidden" name="decision" value="stop">
+                    <button class="btn btn-primary" type="submit">Stop session</button>
+                </form>
+            </div>
+        </div>
+        {% set count = namespace(value=0) %}
+        {% for row in players %}
+            <!--Remember player_id-->
+            {% set p_id = row["player_id"] %}
+            {% set count.value = count.value + 1 %}
+            {% if count.value % 3 == 1 %}
+                <div class="row">
+            {% endif %}
+            <div class="col-md-4">
+                <div class="card">
+                    <h5 class="card-header">
+                        {{row['Name']}}
+                    </h5>
+                    {% for stat in stats %}
+                    {% if stat['player_id'] == p_id %}
+                    <div class="card-header">
+                    <form action="/sessions/session/{{session_name}}" method="post">
+                        <p class="inline">
+                            <span class="param">Level</span>: <span id="p_lvl_{{p_id}}">{{row["Level"]}}</span>
+                        </p>
+                            <div class="levelup inline">
+                                <input name="player_id" type="hidden" value="{{p_id}}">
+                                <input type="hidden" name="session_name" value="{{session_name}}">
+                                <input name="level" type="hidden" value="level">
+                                <input type="hidden" name="con" value="{{scores[stat['Constitution']]}}">
+                                <input type="hidden" name="cast_style" value="{{row['Casting Style']}}">
+                                <button id="p_{{p_id}}" class="btn btn-primary" type="submit">Level up!</button>
+                            </div>
+
+                     </form>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                    <div class="card-body">
+
+                        {% for key in row %}
+                            {% if key != "player_id" and key != "Name" and key != "Level"  %}
+                                <p class="card-text"><span class="param">{{key}}</span>: {{row[key][0]|upper}}{{row[key][1:row[key]|length]}}</p>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="card-footer">
+
+                        <p>Hp / Max Hp</p>
+                        {% for key in hits %}
+                            {% if row["Casting Style"] == key %}
+                                <!-- Need to find stat row by player_id -->
+                                {% for stat in stats %}
+                                {% if stat["player_id"] == p_id %}
+                                {% set hp = hits[key]['hp_1'] + scores[stat['Constitution']] + (row["Level"] - 1)*(hits[key]['hp_after'] + scores[stat['Constitution']]) %}
+                                {% set cur_hp = stat['cur_hp'] %}
+                                {% set max_heal = hp - cur_hp %}
+                                <p><span id="cur_hp_{{p_id}}">{{cur_hp}}</span>/<span id="max_hp_{{p_id}}">{{hp}}</span></p>
+                                <form action="/sessions/session/{{session_name}}" class="inline" method="post">
+                                    <input name="player_id" type="hidden" value="{{p_id}}">
+                                    <input type="hidden" name="session_name" value="{{session_name}}">
+                                    <input type="hidden" name="dmg_hl" value="d">
+                                    <input id="damage_{{p_id}}" class="num" type="number" name="num" value="0" min="0" size="5">
+                                    <button class="btn btn_red" type="submit">Damage</button>
+                                </form>
+                                <form action="/sessions/session/{{session_name}}" class="inline" method="post">
+                                    <input name="player_id" type="hidden" value="{{p_id}}">
+                                    <input type="hidden" name="session_name" value="{{session_name}}">
+                                    <input type="hidden" name="dmg_hl" value="h">
+                                    <input id="heal_{{p_id}}" class="num" type="number" name="num" value="0" min="0" max="{{max_heal}}" size="5">
+                                    <button class="btn btn_green" type="submit">Heal</button>
+                                </form>
+                                {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% if count.value % 3 == 0 %}
+                </div>
+            {% endif %}
+        {% endfor %}
+        {% if count.value < 3 %}
+            </div>
+        {% endif %}
+        <div class="row">
+            <div id="log" class="col-md-12">
+                <p></p>
+            </div>
+        </div>
+    {% endif %}
+    </div>
+{% endblock %}

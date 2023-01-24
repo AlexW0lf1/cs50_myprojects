@@ -1,0 +1,118 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Your messages
+{% endblock %}
+
+{% block main %}
+    {% if invites %}
+        <h2>Invites</h2>
+        <div class="table-responsive mt-3 w-100">
+            <table class="table table-light table-borderless">
+                <thead>
+                    <tr>
+                        <th scope="col">Message</th>
+                        <th scope="col">Description</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in invites %}
+                        <tr>
+                            <td scope="row">{{row['Invite']}}</td>
+                            {% if row['description']|length < 45 %}
+                                <td scope="row">{{row['description']}}</td>
+                            {% else %}
+                                <td scope="row">{{row['description'][0:41]}}...</td>
+                            {% endif %}
+                            <td scope="row">
+                                <form class="inline" action="/messages" method="post">
+                                    <input type="hidden" name="decision" value="join">
+                                    <input type="hidden" name="session_name" value="{{row['name']}}">
+                                    <button class="btn btn-primary" type="submit">Join</button>
+                                </form>
+                                <form class="inline" action="/messages" method="post">
+                                    <input type="hidden" name="decision" value="reject">
+                                    <input type="hidden" name="session_name" value="{{row['name']}}">
+                                    <button class="btn btn-primary" type="submit">Reject</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+    {% if start_messages or end_messages %}
+        <h2>Notifications</h2>
+        <div class="table-responsive mt-3 w-100">
+            <table class="table table-light table-borderless">
+                <thead>
+                    <tr>
+                        <th scope="col">Message</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in start_messages %}
+                        <tr>
+                            <td scope="row">{{row['Notification']}}</td>
+                            <td scope="row">
+                                <form class="inline" action="/messages" method="post">
+                                    <input type="hidden" name="decision" value="connect">
+                                    <input type="hidden" name="session_name" value="{{row['name']}}">
+                                    <button class="btn btn-primary" type="submit">To session!</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    {% for row in end_messages %}
+                        <tr>
+                            <td scope="row">{{row['Notification']}}</td>
+                            <td scope="row">
+                                <form class="inline" action="/messages" method="post">
+                                    <input type="hidden" name="decision" value="ok">
+                                    <button class="btn btn-primary" type="submit">Ok</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+    {% if requests %}
+        <h2>Requests</h2>
+        <div class="table-responsive mt-3 w-100">
+            <table class="table table-light table-borderless">
+                <thead>
+                    <tr>
+                        <th scope="col">Request</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in requests %}
+                        <tr>
+                            <td scope="row">{{row['Request']}}</td>
+                            <td scope="row">
+                                <form class="inline" action="/messages" method="post">
+                                    <input type="hidden" name="decision" value="yes">
+                                    <input type="hidden" name="session_name" value="{{row['name']}}">
+                                    <input type="hidden" name="sender" value="{{row['sender_id']}}">
+                                    <button class="btn btn-primary" type="submit">Yes</button>
+                                </form>
+                                <form class="inline" action="/messages" method="post">
+                                    <input type="hidden" name="decision" value="no">
+                                    <input type="hidden" name="session_name" value="{{row['name']}}">
+                                    <input type="hidden" name="sender" value="{{row['sender_id']}}">
+                                    <button class="btn btn-primary" type="submit">No</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+{% endblock %}
