@@ -80,6 +80,12 @@
                         </div>
                     {% endif %}
                 {% endfor %}
+                <h4>Proficiencies</h4>
+                <div class="player_skills">
+                {% for skill in skills[user_id] %}
+                    <p class="main_params"><span class="param">{{skill}}</span></p>
+                {% endfor %}
+                </div>
 
             </div>
             <div class="col-md-8">

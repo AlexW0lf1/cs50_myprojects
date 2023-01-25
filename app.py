@@ -33,7 +33,16 @@ STYLES = ['Willpower', 'Technique', 'Intellect']
 # Disciplines list
 DISCIPLINES = ['Charms', 'Jinxes-Hexes-and-Curses', 'Transfiguration', 'Healing', 'Divination', 'Magizoology']
 # Backgrounds list
-BACKGROUNDS = ['Artist', 'Bookworm', 'Dreamer', 'Groundskeeper', 'Potioneer', 'Protector', 'Quidditch-fan', 'Socialite', 'Troublemaker']
+BACKGROUNDS = {'Artist': {'skills': ['Insight', 'Performance'], 'equipment': []},
+    'Bookworm': {'skills': ['Magical Theory', 'Investigation'], 'equipment': ['favorite book', 'custom book']},
+    'Dreamer': {'skills': ['Insight', 'Perception', "Astronomer's tools"], 'equipment': ["Astronomer's tools"]},
+    'Groundskeeper': {'skills': ['Survival', 'Magical Creatures', "Herbologist's tools"], 'equipment': ["Herbologist's tools", 'compass']},
+    'Klutz': {'skills': ['Medicine', 'Perception'], 'equipment': ["lucky charm", 'package of plasters']},
+    'Potioneer': {'skills': ['Herbology', 'Potion Making', "Potioneer's kit"], 'equipment': ["Potioneer's kit"]},
+    'Protector': {'skills': ['Athletics', 'Intimidation'], 'equipment': ["Beater's bat"]},
+    'Quidditch-fan': {'skills': ['Acrobatics', 'Athletics', 'Broomstick'], 'equipment': ['quaffle']},
+    'Socialite': {'skills': ['Deception', 'Persuasion'], 'equipment': ['heirloom', 'peacock feather quill']},
+    'Troublemaker': {'skills': ['Sleight of Hand', 'Stealth'], 'equipment': ['fake hall pass', 'Exploding Whizz Poppers']}}
 
 # Count modifier
 def modifier(i):
@@ -404,6 +413,10 @@ def session_play(session_name):
     # Get players data
     players = db.execute("SELECT player_id, character_name AS Name, character_level AS Level, house AS House, style AS [Casting Style], discipline AS Discipline, background AS Background FROM players, sessions WHERE players.session_id = sessions.id AND name = ?", session_name)
     stats = db.execute("SELECT player_id, Strength, Dexterity, Intellect, Wisdom, Charisma, Constitution, cur_hp FROM players, sessions WHERE players.session_id = sessions.id AND name = ?", session_name)
+    p_ids = [p['player_id'] for p in players]
+    # Get skills for each player
+    skills = {p_id: [skill['skill'] for skill in db.execute("SELECT skill FROM proficiencies WHERE player_id = ? AND session_id = ?", user_id, session.get("session_id"))] for p_id in p_ids}
+    print(skills)
     # Get GM data
     gm_rows = db.execute("SELECT username FROM users, sessions WHERE users.id = sessions.gm_id AND name = ?", session_name)
     gm = gm_rows[0]['username']
@@ -415,7 +428,7 @@ def session_play(session_name):
             stop = 1
     except:
         pass
-    return render_template("session_play.html", players=players, stats=stats, gm=gm, session_name=session_name, user_id=user_id, scores=SCORES, role=role, hits=HITS, stop=stop)
+    return render_template("session_play.html", players=players, stats=stats, gm=gm, session_name=session_name, user_id=user_id, scores=SCORES, role=role, hits=HITS, skills=skills, stop=stop)
 
 
 @app.route("/sessions/session/<session_name>/character/<user_id>", methods=["GET", "POST"])
@@ -434,18 +447,26 @@ def create_character(session_name, user_id):
         style = request.form.get('style')
         if style not in [item.lower() for item in STYLES]:
             return apology('Unexisting casting style')
+        # Get skills from form as list (same name in form)
+        skills = request.form.getlist("skill[]")
+        print(skills)
+        if not skills or len(skills) != 2:
+            return apology('Choose two skills as your proficiencies')
         discipline = request.form.get('discipline')
         if discipline not in [item.lower() for item in DISCIPLINES]:
             return apology('Unexisting school of magic')
         background = request.form.get('background')
         if background not in [item.lower() for item in BACKGROUNDS]:
             return apology('Unexisting background')
+        # Append background skills to chosen skills
+        skills += BACKGROUNDS[background.capitalize()]['skills']
+        print(skills)
         session_name = request.form.get('session_name')
         # Get stats from form, add house bonuses
         try:
             stats = {stat: (int(request.form.get(stat[0:3])) + int(request.form.get('add_'+ stat[0:3]))) for stat in ABILITIES}
         except:
-            return apology('Ability values must be integers')
+            return apology('Ability score values must be integers')
         print(stats)
         # Add +1 to chosen ability score
         addition = request.form.get('add_score')
@@ -471,12 +492,17 @@ def create_character(session_name, user_id):
         # Store character data in database
         query = 'UPDATE players SET ' + s + 'character_name = ?, house = ?, style = ?, discipline = ?, background = ?, cur_hp = ? WHERE player_id = ? AND session_id = ?'
         db.execute(query, character_name, house, style, discipline, background, cur_hp, user_id, session_id)
+        # Store skills, clear previous insertions
+        db.execute("DELETE FROM proficiencies WHERE player_id = ? AND session_id = ?", user_id, session_id)
+        for skill in skills:
+            print(skill)
+            db.execute("INSERT INTO proficiencies (player_id, session_id, skill) VALUES (?, ?, ?)", user_id, session_id, skill)
         return redirect("/sessions/")
 
     level = db.execute("SELECT character_level FROM players, sessions WHERE players.session_id = sessions.id AND player_id = ? AND name = ?", user_id, session_name)
     if level[0]['character_level'] != 1:
         return apology('You can edit only first-level character')
-    return render_template("create_character.html", user_id=user_id, session_name=session_name, houses=HOUSES, styles=STYLES, disciplines=DISCIPLINES, backgrounds=BACKGROUNDS, abilities=ABILITIES)
+    return render_template("create_character.html", user_id=user_id, session_name=session_name, houses=HOUSES, styles=STYLES, disciplines=DISCIPLINES, backgrounds=BACKGROUNDS, abilities=ABILITIES, skills=SKILLS)
 
 
 @app.route("/messages", methods=["GET", "POST"])

@@ -27,7 +27,7 @@
                     <div class="char_text" id="house"></div>
                     <div class="mb3">
                         <h3>Casting style</h3>
-                        <select onchange="get_style(event);" autofocus name="style" class="form-select">
+                        <select onchange="get_style(event); get_skills(event);" autofocus name="style" class="form-select">
                             <option selected disabled value="">Style</option>
                             {% for style in styles %}
                                 <option value="{{style|lower}}">{{style}}</option>
@@ -35,6 +35,17 @@
                         </select>
                     </div>
                     <div class="char_text" id="style"></div>
+                    <div class="mb3" id="skills">
+                        <h4>Proficiencies (select two)</h4>
+                        {% for style in skills %}
+                        <fieldset id="skills_{{style}}" class="skills">
+                            {% for skill in skills[style] %}
+                            <input type="checkbox" onclick="return validate_selection();" name="skill[]" value="{{skill}}" id="{{skill}}" class="skill">
+                            <label for="{{skill}}">{{skill}}</label><br>
+                            {% endfor %}
+                        </fieldset>
+                        {% endfor %}
+                    </div>
                     <div class="mb3">
                         <h3>Favorite school of magic</h3>
                         <select onchange="get_discipline(event);" autofocus name="discipline" class="form-select">

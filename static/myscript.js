@@ -103,8 +103,9 @@ async function get_house(event)
 // Get style
 async function get_style(event)
 {
+    // Enable skill choices
+    document.getElementById("skills").style.display = 'block';
     var choice = event.srcElement.value;
-    console.log(choice);
     var style = document.getElementById('style')
 
     let response = await fetch("/rulebook");
@@ -124,6 +125,39 @@ async function get_style(event)
     }
 
     return;
+}
+
+// Get available skill options for selected Style
+function get_skills(event)
+{
+    // Clear previous choices if another house selected
+    options = document.getElementsByClassName("skill");
+    for (option of options){
+        option.checked = false;
+    }
+    fields = document.getElementsByClassName("skills")
+    for (field of fields){
+        field.style.display = "none";
+    }
+    var style = event.srcElement.value;
+    document.getElementById("skills_" + style).style.display = "block";
+    return;
+}
+
+function validate_selection()
+{
+    var options = document.getElementsByClassName("skill");
+    var checked_num = 0;
+    for (option of options){
+        if (option.checked){
+            checked_num++;
+        }
+    }
+    if (checked_num > 2){
+        alert("Can't select more than two options");
+        return false;
+    }
+    return true;
 }
 
 // Get discipline
