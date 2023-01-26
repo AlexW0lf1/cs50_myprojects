@@ -71,6 +71,42 @@ SKILLS = {'willpower': ['Athletics', 'Deception', 'Intimidation', 'Magical Theor
     'intellect': ['Acrobatics', 'Herbology', 'Insight', 'Investigation', 'Magical Creatures',
     'Magical Theory', 'Medicine', 'Muggle Studies', 'Survival']}
 
+# Number of spell slots for each spell-level per character level
+def slots(lvl, sp_lvl):
+    if lvl < sp_lvl*2 - 1: return None
+    if sp_lvl == 1:
+        if lvl + 1 < 4: return lvl + 1
+        else: return 4
+    if sp_lvl in range(2, 4):
+        if lvl == sp_lvl*2 -1: return 2
+        else: return 3
+    if sp_lvl == 4:
+        if lvl == 7: return 1
+        elif lvl == 8: return 2
+        else: return 3
+    if sp_lvl == 5:
+        if lvl == 9: return 1
+        elif lvl > 9 and lvl < 18: return 2
+        else: return 3
+    if sp_lvl == 6:
+        if lvl < 19: return 1
+        else: return 2
+    if sp_lvl == 7:
+        if lvl < 20: return 1
+        else: return 2
+    else: return 1
+
+SLOTS = {j:{i: slots(j, i) for i in range(1,10)} for j in range(1,21)}
+
+# Sorcery points for characters, depending on casting style and level
+def points(style, lvl):
+    if lvl == 1: return None
+    match style:
+        case 'willpower': return lvl
+        case 'technique': return lvl + 1 + (lvl -1)//4
+        case 'intellect': return  lvl - (lvl -1)//4 if lvl != 20 else 15
+
+
 # Get messages
 def get_invites():
     try:
@@ -417,6 +453,11 @@ def session_play(session_name):
     # Get skills for each player
     skills = {p_id: [skill['skill'] for skill in db.execute("SELECT skill FROM proficiencies WHERE player_id = ? AND session_id = ?", user_id, session.get("session_id"))] for p_id in p_ids}
     print(skills)
+    # Get sorcery points
+    s_points = {player["player_id"]: points(player["Casting Style"], player["Level"]) for player in players}
+    # Get spell slots
+    slots = {player["player_id"]: SLOTS[player["Level"]] for player in players}
+    print(slots)
     # Get GM data
     gm_rows = db.execute("SELECT username FROM users, sessions WHERE users.id = sessions.gm_id AND name = ?", session_name)
     gm = gm_rows[0]['username']
@@ -428,7 +469,7 @@ def session_play(session_name):
             stop = 1
     except:
         pass
-    return render_template("session_play.html", players=players, stats=stats, gm=gm, session_name=session_name, user_id=user_id, scores=SCORES, role=role, hits=HITS, skills=skills, stop=stop)
+    return render_template("session_play.html", players=players, stats=stats, gm=gm, session_name=session_name, user_id=user_id, scores=SCORES, role=role, hits=HITS, skills=skills, s_points=s_points, slots=slots, stop=stop)
 
 
 @app.route("/sessions/session/<session_name>/character/<user_id>", methods=["GET", "POST"])

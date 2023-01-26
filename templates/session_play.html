@@ -86,6 +86,20 @@
                     <p class="main_params"><span class="param">{{skill}}</span></p>
                 {% endfor %}
                 </div>
+                <h4>Spellcasting</h4>
+                <div class="player_spells">
+                    <div class="sorcery_points">
+                        <p class="main_params"><span class="param">Sorcery points: </span>{{s_points[user_id]}}</p>
+                    </div>
+                    <div class="spell_slots">
+                        <h5>Spell slots</h5>
+                        {% for slot in slots[user_id] %}
+                        {% if slots[user_id][slot] %}
+                        <p class="main_params"><span class="param">Level {{slot}} slots: </span>{{slots[user_id][slot]}}</p>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
 
             </div>
             <div class="col-md-8">
