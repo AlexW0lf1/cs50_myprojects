@@ -424,11 +424,9 @@ def session_play(session_name):
             num = request.form.get('num')
             rows = db.execute("SELECT cur_hp FROM players, sessions WHERE player_id = ? AND players.session_id = sessions.id AND name = ?", player_id, session_name)
             cur_hp = rows[0]['cur_hp']
-            print(cur_hp)
             # Check if character got damage or heal
             if dmg_hl == 'd':
                 cur_hp = cur_hp - int(num)
-                print(cur_hp)
             elif dmg_hl == 'h':
                 cur_hp = cur_hp + int(num)
             else:
@@ -453,12 +451,10 @@ def session_play(session_name):
     p_ids = [p['player_id'] for p in players]
     # Get skills for each player
     skills = {p_id: [skill['skill'] for skill in db.execute("SELECT skill FROM proficiencies WHERE player_id = ? AND session_id = ?", user_id, session.get("session_id"))] for p_id in p_ids}
-    print(skills)
     # Get sorcery points
     s_points = {player["player_id"]: points(player["Casting Style"], player["Level"]) for player in players}
     # Get spell slots
     slots = {player["player_id"]: SLOTS[player["Level"]] for player in players}
-    print(slots)
     # Get GM data
     gm_rows = db.execute("SELECT username FROM users, sessions WHERE users.id = sessions.gm_id AND name = ?", session_name)
     gm = gm_rows[0]['username']

@@ -249,3 +249,25 @@ window.addEventListener('load', async function check_param(event){
     await new Promise(resolve => setTimeout(resolve, 3000));
     check_param(event);
 });
+
+// Modal call
+function open_modal(p_id)
+{
+    document.getElementById("modal_" + p_id).style.display = "block";
+
+}
+
+function close_modal(p_id)
+{
+    document.getElementById("modal_" + p_id).style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+var modals = document.getElementsByClassName("modal");
+window.onclick = function(event) {
+    for (modal of modals){
+        if (event.target == modal){
+            modal.style.display = "none";
+        }
+    }
+  } 

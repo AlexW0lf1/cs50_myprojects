@@ -254,6 +254,75 @@
                                     <input id="heal_{{p_id}}" class="num" type="number" name="num" value="0" min="0" max="{{max_heal}}" size="5">
                                     <button class="btn btn_green" type="submit">Heal</button>
                                 </form>
+                                <br>
+                                <!-- Button trigger modal -->
+                                <button class="btn btn-primary" onclick="open_modal({{p_id}});" id="b_m_{{p_id}}">Character Sheet</button>
+                                <!-- Modal -->
+                                <div class="modal" id="modal_{{p_id}}">
+                                    <!-- Modal content -->
+                                    <div class="modal-content" id="modal_{{p_id}}">
+                                        <div id="player_info">
+                                            <h4 id="u_name">{{row["Name"]}}</h4>
+                                            <div class="main_params">
+                                                <p class="character_param"><span class="param">Level</span>: <span id="my_lvl">{{row["Level"]}}</span></p>
+                                                <div class="hp">
+                                                    <p>Hp / Max Hp</p>
+                                                    {% for key in hits %}
+                                                        {% if row["Casting Style"] == key %}
+                                                            <!-- Need to find stat row by player_id -->
+                                                            {% for stat in stats %}
+                                                            {% if stat["player_id"] == user_id %}
+                                                            {% set hp = hits[key]['hp_1'] + scores[stat['Constitution']] + (row["Level"] - 1)*(hits[key]['hp_after'] + scores[stat['Constitution']]) %}
+                                                            {% set cur_hp = stat['cur_hp'] %}
+                                                            <p><span id="my_cur_hp">{{cur_hp}}</span>/<span id="my_max_hp">{{hp}}</span></p>
+                                                            {% endif %}
+                                                            {% endfor %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                                {% for key in row %}
+                                                    {% if key != "player_id" and key != "Name" and key != "Level"  %}
+                                                        <p class="character_param"><span class="param">{{key}}</span>: {{row[key][0]|upper}}{{row[key][1:row[key]|length]}}</p>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                            {% for row in stats %}
+                                                {% if row["player_id"] == p_id %}
+                                                    <h4>Abilities</h4>
+                                                    <div class="stats">
+                                                        {% for key in row %}
+                                                            {% if key != 'player_id' and key != 'cur_hp' %}
+                                                                <p class="main_params"><span class="param">{{key}}</span>: {{row[key]}} <span class="modifier">(mod: {{scores[row[key]]}})</span> </p>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% endif %}
+                                            {% endfor %}
+                                            <h4>Proficiencies</h4>
+                                            <div class="player_skills">
+                                            {% for skill in skills[p_id] %}
+                                                <p class="main_params"><span class="param">{{skill}}</span></p>
+                                            {% endfor %}
+                                            </div>
+                                            <h4>Spellcasting</h4>
+                                            <div class="player_spells">
+                                                <div class="sorcery_points">
+                                                    <p class="main_params"><span class="param">Sorcery points: </span>{{s_points[p_id]}}</p>
+                                                </div>
+                                                <div class="spell_slots">
+                                                    <h5>Spell slots</h5>
+                                                    {% for slot in slots[p_id] %}
+                                                    {% if slots[p_id][slot] %}
+                                                    <p class="main_params"><span class="param">Level {{slot}} slots: </span>{{slots[p_id][slot]}}</p>
+                                                    {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                            
+                                        </div>
+                                        <button class=" close btn btn-primary" id="close_{{p_id}}" onclick="close_modal({{p_id}})">&times;</button>
+                                    </div>
+                                </div>
                                 {% endif %}
                                 {% endfor %}
                             {% endif %}
