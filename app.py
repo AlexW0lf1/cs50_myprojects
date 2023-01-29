@@ -383,6 +383,7 @@ def session_play(session_name):
     if request.method == "POST":
         player_id = request.form.get('player_id')
         decision = request.form.get('decision')
+        print("decision= ", decision)
         # If GM wants to stop session
         if decision == 'stop':
             rows_p = db.execute("SELECT player_id FROM players WHERE session_id = ?", session['session_id'])
@@ -405,6 +406,23 @@ def session_play(session_name):
             session.pop('role')
             session.pop('session_id')
             return redirect("/")
+        
+        # If player upgraded scores
+        if decision == 'upgrade_score':
+            print('Upgrading')
+            try:
+                stats = {stat: int(request.form.get(stat[0:3])) for stat in ABILITIES}
+            except:
+                return apology('Ability score values must be integers')
+            # Make query string
+            s = []
+            for stat in stats:
+                s.append(stat + ' = ' + str(stats[stat]))
+            query = "UPDATE players SET " + s.join(", ") + " WHERE player_id = ? AND session_id = ?;"
+            print(query)
+            db.execute(query, session.get("user_id"), session.get("session_id"))
+            return
+            
 
         level = request.form.get('level')
         # If GM leveled up character
@@ -667,3 +685,23 @@ def join():
 @app.route("/rulebook")
 def rulebook():
     return render_template("rulebook.html")
+
+
+@login_required
+@app.route("/scores")
+def scores():
+    if request.method == "POST":
+        try:
+            stats = {stat: int(request.form.get(stat[0:3])) for stat in ABILITIES}
+        except:
+            return apology('Ability score values must be integers')
+        print(stats)
+        # Make query string
+        s = []
+        for stat in stats:
+            s.append(stat + ' = ' + str(stats[stat]))
+        query = "UPDATE players SET " + s.join(", ") + "WHERE player_id = ? AND session_id = ?;"
+        print(query)
+        db.execute(query, session.get("user_id"), session.get("session_id"))
+        return
+    return apology("Wrong route")

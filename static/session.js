@@ -9,6 +9,7 @@ document.addEventListener('submit', async function(event){
     var willpower = {'hit dice': 'd10', 'hp_1': 10, 'hp_after': 6};
     var technique = {'hit dice': 'd6', 'hp_1': 6, 'hp_after': 4};
     var intellect = {'hit dice': 'd8', 'hp_1': 8, 'hp_after': 5};
+    const role = await document.getElementById('role').innerHTML;
     // Prevent page from refreshing if event not from 'stop session' form
     if (ev.id != 'stop')
     {
@@ -37,6 +38,19 @@ document.addEventListener('submit', async function(event){
         console.log(response);
         if (response.ok)
         {
+            // Player submitted some form
+            if (role == 'player'){
+                const abilities = ['Strength', 'Dexterity', 'Intellect', 'Wisdom', 'Charisma', 'Constitution'];
+                if (ev.id == 'form_scores'){
+                    // Change ability scores
+                    for (let ability of abilities){
+                        let score = document.getElementById("my_" + ability);
+                        score.innerHTML = formData.get(ability.substring(0,3));
+                    }
+                    document.getElementById('upgrade_scores').style.display = "none";
+                }
+            }
+            // GM submitted form
             //change value on page
             const dmg_hl = formData.get("dmg_hl");
             const num = parseInt(formData.get("num"));
@@ -166,6 +180,10 @@ window.addEventListener('load', async function check_param(event){
                 newNode.appendChild(textNode);
                 log.insertBefore(newNode, log.children[0]);
                 log.children[0].style.color = 'blue';
+                // Ability score improvement
+                if (['4', '8', '12', '16', '19'].includes(new_lvl)){
+                    document.getElementById('upgrade_scores').style.display = 'block';
+                }
             }
             // Check stop message
             if (doc.getElementById('stop'))
@@ -250,7 +268,7 @@ window.addEventListener('load', async function check_param(event){
     check_param(event);
 });
 
-// Modal call
+// Modal call (character sheet)
 function open_modal(p_id)
 {
     document.getElementById("modal_" + p_id).style.display = "block";
@@ -270,4 +288,37 @@ window.onclick = function(event) {
             modal.style.display = "none";
         }
     }
-  } 
+}
+
+
+// Upgrade scores
+function upgrade_scores(event)
+{
+    var arr = document.getElementsByClassName('abl');
+    var remainder = 2;
+    for (item of arr)
+    {
+        let point = item.value;
+        let cost = parseInt(item.value) - parseInt(item.min);
+        console.log(point, cost);
+        remainder -= cost;
+    }
+    document.getElementById('remaining').innerHTML = remainder;
+    if (remainder < 0)
+    {
+        document.getElementById('error').innerHTML = 'You spent too many points';
+    }
+    else
+    {
+        document.getElementById('error').innerHTML = '';
+    }
+    if (remainder == 0)
+    {
+        document.getElementById('sub').disabled = false;
+    }
+    else
+    {
+        document.getElementById('sub').disabled = true;
+    }
+    return;
+}

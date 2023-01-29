@@ -74,7 +74,7 @@
                         <div class="stats">
                             {% for key in row %}
                                 {% if key != 'player_id' and key != 'cur_hp' %}
-                                    <p class="main_params"><span class="param">{{key}}</span>: {{row[key]}} <span class="modifier">(mod: {{scores[row[key]]}})</span> </p>
+                                    <p class="main_params"><span class="param">{{key}}</span>: <span id="my_{{key}}">{{row[key]}}</span> <span class="modifier">(mod: {{scores[row[key]]}})</span> </p>
                                 {% endif %}
                             {% endfor %}
                         </div>
@@ -271,7 +271,7 @@
                                                         {% if row["Casting Style"] == key %}
                                                             <!-- Need to find stat row by player_id -->
                                                             {% for stat in stats %}
-                                                            {% if stat["player_id"] == user_id %}
+                                                            {% if stat["player_id"] == p_id %}
                                                             {% set hp = hits[key]['hp_1'] + scores[stat['Constitution']] + (row["Level"] - 1)*(hits[key]['hp_after'] + scores[stat['Constitution']]) %}
                                                             {% set cur_hp = stat['cur_hp'] %}
                                                             <p><span id="my_cur_hp">{{cur_hp}}</span>/<span id="my_max_hp">{{hp}}</span></p>
@@ -320,7 +320,7 @@
                                             </div>
                             
                                         </div>
-                                        <button class=" close btn btn-primary" id="close_{{p_id}}" onclick="close_modal({{p_id}})">&times;</button>
+                                        <button class=" close btn" id="close_{{p_id}}" onclick="close_modal({{p_id}})">Close &times;</button>
                                     </div>
                                 </div>
                                 {% endif %}
@@ -343,5 +343,36 @@
             </div>
         </div>
     {% endif %}
+    </div>
+    <!-- Modal upgrade scores -->
+    <div class="modal" id="upgrade_scores">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <form action="/scores" id="form_scores" method="post">
+                <h4>Increase your ability scores</h4>
+                <div class="stats">
+                    {% for row in stats %}
+                    {% if row["player_id"] == user_id %}
+                        <h4>Abilities</h4>
+                        <div class="stats">
+                            {% for key in row %}
+                                {% if key != 'player_id' and key != 'cur_hp' %}
+                                    <p class="main_params"><span class="param">{{key}}</span>:
+                                        <input class="abl" onchange="upgrade_scores(event);" type="number" name="{{key[0:3]}}" value="{{row[key]}}" min="{{row[key]}}" max="20">
+                                        <input type="hidden" name="decision" value="upgrade_score">
+                                    </p>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% endfor %}
+                    <p>Points left: <span id="remaining">2</span></p>
+                    <p id="error"></p>
+                </div>
+
+                <input type="hidden" name="session_name" value="{{session_name}}">
+                <button disabled id="sub" class="btn btn-primary" type="submit">Save changes</button>
+            </form>
+        </div>
     </div>
 {% endblock %}

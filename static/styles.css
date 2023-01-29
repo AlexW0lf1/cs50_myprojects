@@ -228,7 +228,10 @@ tr.sessions > td
     float: right;
     font-size: 28px;
     font-weight: bold;
-    width: 40px;
+    width: 100px;
+    margin: auto;
+    font-size: 20px;
+    background-color: #0b3674;
   }
   
   .close:hover,
