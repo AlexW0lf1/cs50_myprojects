@@ -418,10 +418,9 @@ def session_play(session_name):
             s = []
             for stat in stats:
                 s.append(stat + ' = ' + str(stats[stat]))
-            query = "UPDATE players SET " + s.join(", ") + " WHERE player_id = ? AND session_id = ?;"
+            query = "UPDATE players SET " + ", ".join(s) + " WHERE player_id = ? AND session_id = ?;"
             print(query)
             db.execute(query, session.get("user_id"), session.get("session_id"))
-            return
             
 
         level = request.form.get('level')

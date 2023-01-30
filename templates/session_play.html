@@ -74,7 +74,7 @@
                         <div class="stats">
                             {% for key in row %}
                                 {% if key != 'player_id' and key != 'cur_hp' %}
-                                    <p class="main_params"><span class="param">{{key}}</span>: <span id="my_{{key}}">{{row[key]}}</span> <span class="modifier">(mod: {{scores[row[key]]}})</span> </p>
+                                    <p class="main_params"><span class="param">{{key}}</span>: <span id="my_{{key}}">{{row[key]}}</span> <span id="my_mod_{{key}}" class="modifier">(mod: {{scores[row[key]]}})</span> </p>
                                 {% endif %}
                             {% endfor %}
                         </div>

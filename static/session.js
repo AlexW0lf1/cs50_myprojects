@@ -42,11 +42,6 @@ document.addEventListener('submit', async function(event){
             if (role == 'player'){
                 const abilities = ['Strength', 'Dexterity', 'Intellect', 'Wisdom', 'Charisma', 'Constitution'];
                 if (ev.id == 'form_scores'){
-                    // Change ability scores
-                    for (let ability of abilities){
-                        let score = document.getElementById("my_" + ability);
-                        score.innerHTML = formData.get(ability.substring(0,3));
-                    }
                     document.getElementById('upgrade_scores').style.display = "none";
                 }
             }
@@ -183,6 +178,18 @@ window.addEventListener('load', async function check_param(event){
                 // Ability score improvement
                 if (['4', '8', '12', '16', '19'].includes(new_lvl)){
                     document.getElementById('upgrade_scores').style.display = 'block';
+                }
+            }
+            // Check for upgraded scores
+            const abilities = ['Strength', 'Dexterity', 'Intellect', 'Wisdom', 'Charisma', 'Constitution'];
+            for (let ability of abilities){
+                let old_score = document.getElementById('my_' + ability)
+                let old_mod = document.getElementById('my_mod_' + ability)
+                let new_score = doc.getElementById('my_' + ability)
+                let new_mod = doc.getElementById('my_mod_' + ability)
+                if (old_score.innerHTML != new_score.innerHTML){
+                    old_score.innerHTML = new_score.innerHTML;
+                    old_mod.innerHTML = new_mod.innerHTML;
                 }
             }
             // Check stop message
