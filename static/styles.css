@@ -81,7 +81,7 @@ tr.sessions > td
 }
 
 /* Session_play, player */
-#player_info
+.player_info
 {
     border-right: 2px solid black;
     padding: 10px 15px 20px 0;
@@ -195,6 +195,10 @@ tr.sessions > td
 #intro
 {
     font-size: 20px;
+}
+
+.player_id{
+    display: none;
 }
 
 /* Modals (W3Schools)*/

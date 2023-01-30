@@ -43,6 +43,11 @@ document.addEventListener('submit', async function(event){
                 const abilities = ['Strength', 'Dexterity', 'Intellect', 'Wisdom', 'Charisma', 'Constitution'];
                 if (ev.id == 'form_scores'){
                     document.getElementById('upgrade_scores').style.display = "none";
+                    var arr = document.getElementsByClassName('abl');
+                    for (item of arr){
+                        item.min = item.value;
+                    }
+                    document.getElementById('remaining').innerHTML = 2;
                 }
             }
             // GM submitted form
@@ -86,6 +91,7 @@ document.addEventListener('submit', async function(event){
                     document.getElementById('p_' + player_id).disabled = true;
                 }
                 document.getElementById('p_lvl_' + player_id).innerHTML = p_lvl;
+                document.getElementById(player_id + '_lvl').innerHTML = p_lvl;
                 // Set hp value
                 const con = parseInt(formData.get("con"));
                 const style = formData.get("cast_style");
@@ -93,7 +99,7 @@ document.addEventListener('submit', async function(event){
                 {
                     if (el.style == style)
                     {
-                        var max_hp = el.hp_1 + (p_lvl - 1)*(el.hp_after + con);
+                        var max_hp = el.hp_1 + con + (p_lvl - 1)*(el.hp_after + con);
                         document.getElementById('max_hp_' + player_id).innerHTML = max_hp;
                         document.getElementById('cur_hp_' + player_id).innerHTML = max_hp;
                         return;
@@ -261,8 +267,34 @@ window.addEventListener('load', async function check_param(event){
         }
         else
         {
-            // No get requests for gm
-            return;
+            // GM Get requests
+            // Check for upgraded scores for every player
+            const abilities = ['Strength', 'Dexterity', 'Intellect', 'Wisdom', 'Charisma', 'Constitution'];
+            const p_ids = document.getElementsByClassName('player_id');
+            for (let p_id of p_ids){
+                for (let ability of abilities){
+                    let old_score = document.getElementById(p_id.innerHTML + '_' + ability)
+                    let old_mod = document.getElementById(p_id.innerHTML + '_mod_' + ability)
+                    let new_score = doc.getElementById(p_id.innerHTML + '_' + ability)
+                    let new_mod = doc.getElementById(p_id.innerHTML + '_mod_' + ability)
+                    if (old_score.innerHTML != new_score.innerHTML){
+                        old_score.innerHTML = new_score.innerHTML;
+                        old_mod.innerHTML = new_mod.innerHTML;
+                    }
+                }
+                let old_hp = document.getElementById('cur_hp_' + p_id.innerHTML);
+                let new_hp = doc.getElementById('cur_hp_' + p_id.innerHTML);
+                let m_old_hp = document.getElementById(p_id.innerHTML + '_cur_hp_m');
+                let m_old_max_hp = document.getElementById(p_id.innerHTML + '_max_hp_m');
+                let old_max_hp = document.getElementById('max_hp_' + p_id.innerHTML);
+                let new_max_hp = doc.getElementById('max_hp_' + p_id.innerHTML);
+                // Update card hp
+                old_hp.innerHTML = new_hp.innerHTML;
+                old_max_hp.innerHTML = new_max_hp.innerHTML;
+                // Update character sheet hp (modal)
+                m_old_hp.innerHTML = new_hp.innerHTML;
+                m_old_max_hp.innerHTML = new_max_hp.innerHTML;
+            }
         }
     }
     else

@@ -418,9 +418,16 @@ def session_play(session_name):
             s = []
             for stat in stats:
                 s.append(stat + ' = ' + str(stats[stat]))
-            query = "UPDATE players SET " + ", ".join(s) + " WHERE player_id = ? AND session_id = ?;"
+            # Update cur_hp if changed
+            rows = db.execute("SELECT character_level, style FROM players WHERE player_id = ? AND session_id = ?;", user_id, session.get('session_id'))
+            lv = rows[0]['character_level']
+            st = rows[0]['style']
+            con = stats["Constitution"]
+            cur_hp = HITS[st]['hp_1'] + SCORES[con] + (lv - 1)*(HITS[st]['hp_after'] + SCORES[con])
+            print(cur_hp)
+            query = "UPDATE players SET " + ", ".join(s) + ", cur_hp = ? WHERE player_id = ? AND session_id = ?;"
             print(query)
-            db.execute(query, session.get("user_id"), session.get("session_id"))
+            db.execute(query, cur_hp, session.get("user_id"), session.get("session_id"))
             
 
         level = request.form.get('level')
@@ -686,21 +693,3 @@ def rulebook():
     return render_template("rulebook.html")
 
 
-@login_required
-@app.route("/scores")
-def scores():
-    if request.method == "POST":
-        try:
-            stats = {stat: int(request.form.get(stat[0:3])) for stat in ABILITIES}
-        except:
-            return apology('Ability score values must be integers')
-        print(stats)
-        # Make query string
-        s = []
-        for stat in stats:
-            s.append(stat + ' = ' + str(stats[stat]))
-        query = "UPDATE players SET " + s.join(", ") + "WHERE player_id = ? AND session_id = ?;"
-        print(query)
-        db.execute(query, session.get("user_id"), session.get("session_id"))
-        return
-    return apology("Wrong route")

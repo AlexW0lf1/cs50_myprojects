@@ -39,7 +39,7 @@
         </div>
 
         <div class="row">
-            <div id="player_info" class="col-md-4">
+            <div class="col-md-4 player_info">
                 {% for row in players %}
                     {% if row["player_id"] == user_id %}
                         <h4 id="u_name">{{row["Name"]}}</h4>
@@ -191,6 +191,7 @@
         {% for row in players %}
             <!--Remember player_id-->
             {% set p_id = row["player_id"] %}
+            <div class="player_id">{{p_id}}</div>
             {% set count.value = count.value + 1 %}
             {% if count.value % 3 == 1 %}
                 <div class="row">
@@ -261,10 +262,10 @@
                                 <div class="modal" id="modal_{{p_id}}">
                                     <!-- Modal content -->
                                     <div class="modal-content" id="modal_{{p_id}}">
-                                        <div id="player_info">
+                                        <div class="player_info">
                                             <h4 id="u_name">{{row["Name"]}}</h4>
                                             <div class="main_params">
-                                                <p class="character_param"><span class="param">Level</span>: <span id="my_lvl">{{row["Level"]}}</span></p>
+                                                <p class="character_param"><span class="param">Level</span>: <span id="{{p_id}}_lvl">{{row["Level"]}}</span></p>
                                                 <div class="hp">
                                                     <p>Hp / Max Hp</p>
                                                     {% for key in hits %}
@@ -274,7 +275,7 @@
                                                             {% if stat["player_id"] == p_id %}
                                                             {% set hp = hits[key]['hp_1'] + scores[stat['Constitution']] + (row["Level"] - 1)*(hits[key]['hp_after'] + scores[stat['Constitution']]) %}
                                                             {% set cur_hp = stat['cur_hp'] %}
-                                                            <p><span id="my_cur_hp">{{cur_hp}}</span>/<span id="my_max_hp">{{hp}}</span></p>
+                                                            <p><span id="{{p_id}}_cur_hp_m">{{cur_hp}}</span>/<span id="{{p_id}}_max_hp_m">{{hp}}</span></p>
                                                             {% endif %}
                                                             {% endfor %}
                                                         {% endif %}
@@ -292,7 +293,7 @@
                                                     <div class="stats">
                                                         {% for key in row %}
                                                             {% if key != 'player_id' and key != 'cur_hp' %}
-                                                                <p class="main_params"><span class="param">{{key}}</span>: {{row[key]}} <span class="modifier">(mod: {{scores[row[key]]}})</span> </p>
+                                                                <p class="main_params"><span class="param">{{key}}</span>: <span id="{{p_id}}_{{key}}" >{{row[key]}}</span><span id="{{p_id}}_mod_{{key}}" class="modifier">(mod: {{scores[row[key]]}})</span> </p>
                                                             {% endif %}
                                                         {% endfor %}
                                                     </div>
