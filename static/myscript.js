@@ -316,11 +316,14 @@ function get_wand(event){
     var background = event.srcElement.value;
     var w = BACKGROUNDS[background];
     var w_wood = document.getElementById('wand_wood');
-    for (var wood of w.wood){
-        var opt = document.createElement('option');
-        opt.value = wood;
-        opt.innerHTML = wood;
-        w_wood.appendChild(opt);
+    for (key in w){
+        for (el of w[key]){
+            var menu = document.getElementById('wand_' + key);
+            var opt = document.createElement('option');
+            opt.value = el;
+            opt.innerHTML = el;
+            menu.appendChild(opt);
+        }
     }
     document.getElementById('wand').style.display = 'block';
     return

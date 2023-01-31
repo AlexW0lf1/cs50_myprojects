@@ -72,6 +72,8 @@ SKILLS = {'willpower': ['Athletics', 'Deception', 'Intimidation', 'Magical Theor
     'intellect': ['Acrobatics', 'Herbology', 'Insight', 'Investigation', 'Magical Creatures',
     'Magical Theory', 'Medicine', 'Muggle Studies', 'Survival']}
 
+WAND = ['wood', 'core', 'length', 'flexibility']
+
 # Number of spell slots for each spell-level per character level
 def slots(lvl, sp_lvl):
     if lvl < sp_lvl*2 - 1: return None
@@ -473,8 +475,10 @@ def session_play(session_name):
     players = db.execute("SELECT player_id, character_name AS Name, character_level AS Level, house AS House, style AS [Casting Style], discipline AS Discipline, background AS Background FROM players, sessions WHERE players.session_id = sessions.id AND name = ?", session_name)
     stats = db.execute("SELECT player_id, Strength, Dexterity, Intellect, Wisdom, Charisma, Constitution, cur_hp FROM players, sessions WHERE players.session_id = sessions.id AND name = ?", session_name)
     p_ids = [p['player_id'] for p in players]
+    # Get wands
+    wands = {p_id: db.execute('SELECT wood, core, length, flexibility FROM wands WHERE player_id = ? AND session_id = ?;', p_id, session['session_id']) for p_id in p_ids}
     # Get skills for each player
-    skills = {p_id: [skill['skill'] for skill in db.execute("SELECT skill FROM proficiencies WHERE player_id = ? AND session_id = ?", user_id, session.get("session_id"))] for p_id in p_ids}
+    skills = {p_id: [skill['skill'] for skill in db.execute("SELECT skill FROM proficiencies WHERE player_id = ? AND session_id = ?", p_id, session.get("session_id"))] for p_id in p_ids}
     # Get sorcery points
     s_points = {player["player_id"]: points(player["Casting Style"], player["Level"]) for player in players}
     # Get spell slots
@@ -490,7 +494,7 @@ def session_play(session_name):
             stop = 1
     except:
         pass
-    return render_template("session_play.html", players=players, stats=stats, gm=gm, session_name=session_name, user_id=user_id, scores=SCORES, role=role, hits=HITS, skills=skills, s_points=s_points, slots=slots, stop=stop)
+    return render_template("session_play.html", players=players, stats=stats, gm=gm, session_name=session_name, user_id=user_id, scores=SCORES, role=role, hits=HITS, skills=skills, s_points=s_points, slots=slots, wands=wands, stop=stop)
 
 
 @app.route("/sessions/session/<session_name>/character/<user_id>", methods=["GET", "POST"])
@@ -523,6 +527,11 @@ def create_character(session_name, user_id):
         # Append background skills to chosen skills
         skills += BACKGROUNDS[background.capitalize()]['skills']
         print(skills)
+        # Get wand attributes
+        wand = {}
+        for attr in WAND:
+            wand[attr] = request.form.get('wand_' + attr)
+
         session_name = request.form.get('session_name')
         # Get stats from form, add house bonuses
         try:
@@ -559,6 +568,8 @@ def create_character(session_name, user_id):
         for skill in skills:
             print(skill)
             db.execute("INSERT INTO proficiencies (player_id, session_id, skill) VALUES (?, ?, ?)", user_id, session_id, skill)
+        # Store wand in database
+        db.execute('INSERT INTO wands (?, ?, ?, ?, player_id, session_id) VALUES (?, ?, ?, ?, ?, ?);', *[key for key in wand], *[wand[key] for key in wand], user_id, session_id)
         return redirect("/sessions/")
 
     level = db.execute("SELECT character_level FROM players, sessions WHERE players.session_id = sessions.id AND player_id = ? AND name = ?", user_id, session_name)

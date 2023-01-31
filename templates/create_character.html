@@ -66,6 +66,31 @@
                         </select>
                     </div>
                     <div class="char_text" id="bg"></div>
+
+                    <div id="wand">
+                        <h3>Wand</h3>
+                        <div class="mb3">
+                            <select id="wand_wood" name="wand_wood" class="form-select">
+                                <option selected disabled value="">Wood</option>
+                            </select>
+                        </div>
+                        <div class="mb3">
+                            <select autofocus id =wand_core name="wand_core" class="form-select">
+                                <option selected disabled value="">Core</option>
+                            </select>
+                        </div>
+                        <div class="mb3">
+                            <select autofocus id="wand_length" name="wand_length" class="form-select">
+                                <option selected disabled value="">Length</option>
+                            </select>
+                        </div>
+                        <div class="mb3">
+                            <select autofocus id="wand_flexibility" name="wand_flexibility" class="form-select">
+                                <option selected disabled value="">Flexibility</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="mb3">
                         <h4>Add +1 to any ability score of your choice</h4>
                         <select onchange="get_addition(event);" autofocus name="addition" class="form-select">
@@ -75,21 +100,6 @@
                             {% endfor %}
                         </select>
                         <input id="add_score" type="hidden" name="add_score" value=''>
-                    </div>
-                    <div class="mb3" id="wand">
-                        <h3>Wand</h3>
-                        <select autofocus id="wand_wood" name="wand_wood" class="form-select">
-                            <option selected disabled value="">Wood</option>
-                        </select>
-                        <select autofocus id =wand_core name="wand_core" class="form-select">
-                            <option selected disabled value="">Core</option>
-                        </select>
-                        <select autofocus id="wand_length" name="wand_length" class="form-select">
-                            <option selected disabled value="">Length</option>
-                        </select>
-                        <select autofocus id="wand_flexibility" name="wand_flexibility" class="form-select">
-                            <option selected disabled value="">Flexibility</option>
-                        </select>
                     </div>
 
                     <div class="stats">

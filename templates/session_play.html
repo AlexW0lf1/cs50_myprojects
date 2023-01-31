@@ -68,6 +68,12 @@
                         </div>
                     {% endif %}
                 {% endfor %}
+                <h4>Wand</h4>
+                <div class="player_wand">
+                {% for attr in wands[user_id][0] %}
+                    <p class="main_params"><span class="param">{{attr[0]|upper}}{{attr[1:]}}</span>: {{wands[user_id][0][attr]}}</p>
+                {% endfor %}
+                </div>
                 {% for row in stats %}
                     {% if row["player_id"] == user_id %}
                         <h4>Abilities</h4>
@@ -286,6 +292,12 @@
                                                         <p class="character_param"><span class="param">{{key}}</span>: {{row[key][0]|upper}}{{row[key][1:row[key]|length]}}</p>
                                                     {% endif %}
                                                 {% endfor %}
+                                            </div>
+                                            <h4>Wand</h4>
+                                            <div class="player_wand">
+                                            {% for attr in wands[p_id][0] %}
+                                                <p class="main_params"><span class="param">{{attr[0]|upper}}{{attr[1:]}}</span>: {{wands[p_id][0][attr]}}</p>
+                                            {% endfor %}
                                             </div>
                                             {% for row in stats %}
                                                 {% if row["player_id"] == p_id %}
