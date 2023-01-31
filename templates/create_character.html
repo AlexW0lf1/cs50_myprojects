@@ -58,7 +58,7 @@
                     <div class="char_text" id="discipline"></div>
                     <div class="mb3">
                         <h3>Background</h3>
-                        <select onchange="get_bg(event);" autofocus name="background" class="form-select">
+                        <select onchange="get_bg(event); get_wand(event);" autofocus name="background" class="form-select">
                             <option selected disabled value="">Background</option>
                             {% for background in backgrounds %}
                                 <option value="{{background|lower}}">{{background}}</option>
@@ -75,6 +75,21 @@
                             {% endfor %}
                         </select>
                         <input id="add_score" type="hidden" name="add_score" value=''>
+                    </div>
+                    <div class="mb3" id="wand">
+                        <h3>Wand</h3>
+                        <select autofocus id="wand_wood" name="wand_wood" class="form-select">
+                            <option selected disabled value="">Wood</option>
+                        </select>
+                        <select autofocus id =wand_core name="wand_core" class="form-select">
+                            <option selected disabled value="">Core</option>
+                        </select>
+                        <select autofocus id="wand_length" name="wand_length" class="form-select">
+                            <option selected disabled value="">Length</option>
+                        </select>
+                        <select autofocus id="wand_flexibility" name="wand_flexibility" class="form-select">
+                            <option selected disabled value="">Flexibility</option>
+                        </select>
                     </div>
 
                     <div class="stats">

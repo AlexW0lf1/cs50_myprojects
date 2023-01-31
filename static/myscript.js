@@ -307,4 +307,24 @@ function get_addition(event)
 
 
 
+function get_wand(event){
+    const cores = ['phoenix feather', 'dragon heartstring', 'unicorn hair'];
+    var wand = {'wood': ['pine', 'red oak', 'sycamore'], 'core': cores, 'length': ['10', '11.5', '13'], 'flexibility': ['reasonably firm', 'slightly swishy', 'quite yeilding']};
+    const BACKGROUNDS = {'artist': wand,
+        'bookworm': wand,
+        'dreamer': wand};
+    var background = event.srcElement.value;
+    var w = BACKGROUNDS[background];
+    var w_wood = document.getElementById('wand_wood');
+    for (var wood of w.wood){
+        var opt = document.createElement('option');
+        opt.value = wood;
+        opt.innerHTML = wood;
+        w_wood.appendChild(opt);
+    }
+    document.getElementById('wand').style.display = 'block';
+    return
+}
+
+
 

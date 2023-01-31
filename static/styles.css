@@ -80,6 +80,10 @@ tr.sessions > td
     font-size: large;
 }
 
+#wand{
+    display: none;
+}
+
 /* Session_play, player */
 .player_info
 {
