@@ -15,15 +15,15 @@ class Lot(models.Model):
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=300)
     price = models.PositiveIntegerField()
-    image = models.ImageField(blank=True)
-    category = models.CharField(choices=CATEGORIES, blank=True)
-    status = models.CharField(default="Active")
+    image = models.ImageField(blank=True, upload_to="auctions/static/images/")
+    category = models.CharField(max_length=100, choices=CATEGORIES, blank=True)
+    status = models.CharField(max_length=100, default="Active")
     watching = models.ManyToManyField(User, blank=True, related_name="watchlist")
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="lots")
 
 class Bid(models.Model):
-    bid = models.PositiveIntegerField()
-    buyer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="buyers")
+    price = models.PositiveIntegerField()
+    buyer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_bids")
     lot = models.ForeignKey(Lot, on_delete=models.CASCADE, related_name="bids")
 
 class Comment(models.Model):

@@ -1,0 +1,40 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>{{ lot.title }}</h2>
+    <h3>Category: {{ lot.category }}</h3>
+    <img src="{% static 'images/' lot.image %}" alt="No image">
+    <p>
+        {{ lot.description }}
+    </p>
+
+    <form action="{% url 'listing' lot.id %}" method="post">
+        {% csrf_token %}
+        {{form_bid}}
+        <input type="submit" value="Create">
+    </form>
+    <form action="{% url 'listing' lot.id %}" method="post">
+        {% csrf_token %}
+        {{form_comment}}
+        <input type="submit" value="Create">
+    </form>
+    <div class="bids">
+        <h3>Bids history</h3>
+        {% for bid in bids %}
+        <div class="user">{{ bid.buyer }}</div>
+        <div class="price">{{bid.price}}</div>
+        {% empty %}
+        <h4>No Bids</h4>
+        {% endfor %}
+    </div>
+    <div class="comments">
+        <h3>Comments</h3>
+        {% for comment in comments %}
+        <div class="user">{{ comment.author }}</div>
+        <div class="price">{{ comment.comment }}</div>
+        {% empty %}
+        <h4>No Comments</h4>
+        {% endfor %}
+    </div>
+  
+{% endblock %}
