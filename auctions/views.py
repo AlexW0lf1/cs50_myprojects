@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django import forms
+from django.core.exceptions import ValidationError
 
 from .models import User, Lot, Bid, Comment
 
@@ -121,7 +122,13 @@ def listing(request, lot_id):
                 new_bid = form.save(commit=False)
                 new_bid.buyer = request.user
                 new_bid.lot = Lot.objects.get(pk=lot_id)
-                new_bid.save()
+                try:
+                    new_bid.save()
+                except ValidationError:
+                    return render(request, "auctions/error.html", {
+                        "message": "Bid has to be higher than current price",
+                    })
+
             else:
                 print("Nope")
                 lot = Lot.objects.get(pk=lot_id)

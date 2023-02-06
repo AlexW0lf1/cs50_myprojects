@@ -2,24 +2,24 @@
 {% load static %}
 
 {% block body %}
-    <h2>{{ lot.title }}</h2>
-    <h3>Category: {{ lot.category }}</h3>
+    <h2>Listing: {{ lot.title }}</h2>
+    {% if lot.image %}
     <img src="{{ lot.image.url }}" alt="No image">
-    {{ lot.image.url|length }}
-    <p>
-        {{ lot.description }}
-    </p>
-
+    {% else %}
+    <img src="{% static 'images/no.jpg' %}" alt="No image">
+    {% endif %}
+    <div class="description">
+        <p>
+            {{ lot.description }}
+        </p>
+    </div>
+    <p class="price">Price: {{lot.price}}</p>
     <form action="{% url 'listing' lot.id %}" method="post">
         {% csrf_token %}
-        {{form_bid}}
-        <input type="submit" value="Create">
+        {{form_bid.as_div}}
+        <input type="submit" value="Place Bid">
     </form>
-    <form action="{% url 'listing' lot.id %}" method="post">
-        {% csrf_token %}
-        {{form_comment}}
-        <input type="submit" value="Create">
-    </form>
+    {% if lot.seller != user %}
     <div class="bids">
         <h3>Bids history</h3>
         {% for bid in bids %}
@@ -29,14 +29,32 @@
         <h4>No Bids</h4>
         {% endfor %}
     </div>
+    {% endif %}
+    <div class="details">
+        <h3>Details</h3>
+        <ul>
+            <li>Listed by {{ lot.seller.username }}</li>
+            {% if category %}
+            <li>Category: {{lot.category}}</li>
+            {% else %}
+            <li>No category</li>
+            {% endif %}
+            <li>Status: {{ lot.status }}</li>
+        </ul>
+    </div>
     <div class="comments">
         <h3>Comments</h3>
         {% for comment in comments %}
-        <div class="user">{{ comment.author }}</div>
+        <div class="user">{{ comment.author }} {% if comment.author.pk == lot.seller.pk %}(Seller) {% endif %}</div>
         <div class="price">{{ comment.comment }}</div>
         {% empty %}
         <h4>No Comments</h4>
         {% endfor %}
     </div>
+    <form action="{% url 'listing' lot.id %}" method="post">
+        {% csrf_token %}
+        {{form_comment.as_div}}
+        <input type="submit" value="Comment">
+    </form>
   
 {% endblock %}
