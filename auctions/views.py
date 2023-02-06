@@ -90,12 +90,15 @@ def register(request):
 def new(request):
     if request.method == "POST":
         # Create form instance from POST data
-        form = NewLotForm(request.POST)
+        form = NewLotForm(request.POST, request.FILES)
         if form.is_valid():
+            img = form.cleaned_data.get('image')
+            print(img)
             # Save a new lot (model instance)
             new_lot = form.save(commit=False)
             new_lot.seller = request.user
             new_lot.status = "Active"
+            print(new_lot.image)
             new_lot.save()
             print(new_lot)
             return HttpResponseRedirect(reverse("listing", args=(new_lot.id,)))

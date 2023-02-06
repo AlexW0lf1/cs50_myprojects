@@ -15,7 +15,7 @@ class Lot(models.Model):
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=300)
     price = models.PositiveIntegerField()
-    image = models.ImageField(blank=True, upload_to="auctions/static/images/")
+    image = models.ImageField(blank=True)
     category = models.CharField(max_length=100, choices=CATEGORIES, blank=True)
     status = models.CharField(max_length=100, default="Active")
     watching = models.ManyToManyField(User, blank=True, related_name="watchlist")

@@ -1,9 +1,11 @@
 {% extends "auctions/layout.html" %}
+{% load static %}
 
 {% block body %}
     <h2>{{ lot.title }}</h2>
     <h3>Category: {{ lot.category }}</h3>
-    <img src="{% static 'images/' lot.image %}" alt="No image">
+    <img src="{{ lot.image.url }}" alt="No image">
+    {{ lot.image.url|length }}
     <p>
         {{ lot.description }}
     </p>
