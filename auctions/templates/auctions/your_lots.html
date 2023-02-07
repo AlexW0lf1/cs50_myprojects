@@ -17,5 +17,7 @@
         </p>
     </div>
     <p class="price">Price: ${{lot.price}}</p>
+    {% empty %}
+    <h3>You haven't placed any listings yet</h3>
     {% endfor %}
 {% endblock %}

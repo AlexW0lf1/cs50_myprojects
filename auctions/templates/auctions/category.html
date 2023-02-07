@@ -12,6 +12,7 @@
     <form action="{% url 'watchlist' %}" method="post">
         {% csrf_token %}
         <input type="hidden" value="remove" name="remove">
+        <input type="hidden" value="{{lot.id}}" name="lot_id">
         <input type="submit" value="Remove from Watchlist">
     </form>
     {% else %}
@@ -19,6 +20,7 @@
     <form action="{% url 'watchlist' %}" method="post">
         {% csrf_token %}
         <input type="hidden" value="add" name="add">
+        <input type="hidden" value="{{lot.id}}" name="lot_id">
         <input type="submit" value="Add to Watchlist">
     </form>
     {% endif %}

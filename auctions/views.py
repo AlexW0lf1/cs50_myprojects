@@ -184,7 +184,13 @@ def listing(request, lot_id):
 @login_required(login_url='/login')
 def watchlist_view(request):
     user = request.user
-    watchlist = user.watchlist
+    if request.method == "POST":
+        form = request.POST
+        if form.get("add"):
+            user.watchlist.add(Lot.objects.get(pk=form.get("lot_id")))
+        if form.get("remove"):
+            user.watchlist.remove(Lot.objects.get(pk=form.get("lot_id")))
+    watchlist = user.watchlist.all()
     return render(request, "auctions/watchlist.html", {
         "watchlist": watchlist,
     })

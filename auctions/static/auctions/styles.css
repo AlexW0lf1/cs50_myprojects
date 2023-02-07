@@ -5,3 +5,16 @@ body {
 .image{
     max-height: 300px;
 }
+
+#container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#container > div {
+    background-color: #eeeeee;
+    font-size: 20px;
+    margin: 20px;
+    padding: 20px;
+    width: 400px;
+}

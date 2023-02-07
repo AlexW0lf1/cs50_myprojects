@@ -3,35 +3,81 @@
 
 {% block body %}
     <h2>Active Listings</h2>
-
-    {% for lot in lots %}
-    <h2>Listing: {{ lot.title }} {% if lot.seller == user %} (Yours) {% endif %}</h2>
-    {% if user in lot.watching %}
-    <div class="tag">Watchlist</div>
-    <!-- Remove from Watchlist -->
-    <form action="{% url 'watchlist' %}" method="post">
-        {% csrf_token %}
-        <input type="hidden" value="remove" name="remove">
-        <input type="submit" value="Remove from Watchlist">
-    </form>
-    {% else %}
-    <!-- Add to Watchlist -->
-    <form action="{% url 'watchlist' %}" method="post">
-        {% csrf_token %}
-        <input type="hidden" value="add" name="add">
-        <input type="submit" value="Add to Watchlist">
-    </form>
-    {% endif %}
-    {% if lot.image %}
-    <img class="image" src="{{ lot.image.url }}" alt="No image">
-    {% else %}
-    <img class="image" src="{% static 'images/no.jpg' %}" alt="No image">
-    {% endif %}
-    <div class="description">
-        <p>
-            {{ lot.description }}
-        </p>
+    <div id="container">
+        {% for lot in lots %}
+        <div class="card">
+            {% if lot.image %}
+            <img class="card-img-top" src="{{ lot.image.url }}" alt="No image">
+            {% else %}
+            <img class="card-img-top" src="{% static 'images/no.jpg' %}" alt="No image">
+            {% endif %}
+            <div class="card-body">
+                <h4 class="card-title"><a href="{% url 'listing' lot.id %}"> Listing: {{ lot.title }} {% if lot.seller == user %} (Yours) {% endif %}</a></h2>
+                {% if user in lot.watching %}
+                <div class="tag">Watchlist</div>
+                <!-- Remove from Watchlist -->
+                <form action="{% url 'watchlist' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" value="remove" name="remove">
+                    <input type="hidden" value="{{lot.id}}" name="lot_id">
+                    <input type="submit" value="Remove from Watchlist">
+                </form>
+                {% else %}
+                <!-- Add to Watchlist -->
+                <form action="{% url 'watchlist' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" value="add" name="add">
+                    <input type="hidden" value="{{lot.id}}" name="lot_id">
+                    <input type="submit" value="Add to Watchlist">
+                </form>
+                {% endif %}
+                <div class="card-text">
+                    <p>
+                        {{ lot.description }}
+                    </p>
+                </div>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Price: ${{lot.price}}</li>
+                <li class="list-group-item">Category: {{lot.category}}</li>
+            </ul>
+            <div class="card-body">
+                <a href="{% url 'listing' lot.id %}" class="card-link">View</a>
+            </div>
+            <div class="card-footer text-muted">
+                {{lot.created}}
+            </div>
+        </div>
+        {% endfor %}
     </div>
-    <p class="price">Price: ${{lot.price}}</p>
-    {% endfor %}
+
+    <!-- Card temporary code -->
+    <div class="card" style="width: 30rem;">
+        <img class="card-img-top" src="..." alt="Card image cap">
+        <div class="card-body">
+          <h5 class="card-title">Card title</h5>
+          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">Cras justo odio</li>
+          <li class="list-group-item">Dapibus ac facilisis in</li>
+          <li class="list-group-item">Vestibulum at eros</li>
+        </ul>
+        <div class="card-body">
+          <a href="#" class="card-link">Card link</a>
+          <a href="#" class="card-link">Another link</a>
+        </div>
+        <div class="card-footer text-muted">
+            2 days ago
+        </div>
+      </div>
+
+      <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+            </div>
+            <div class="col-md-6">
+            </div>
+        </div>
+    </div>
 {% endblock %}

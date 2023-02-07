@@ -20,6 +20,7 @@ class Lot(models.Model):
     image = models.ImageField(blank=True)
     category = models.CharField(max_length=100, choices=CATEGORIES, blank=True)
     status = models.CharField(max_length=100, default="Active")
+    created = models.DateField(auto_now_add=True)
     watching = models.ManyToManyField(User, blank=True, related_name="watchlist")
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="lots")
     winner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, default=None)
