@@ -9,11 +9,11 @@ class User(AbstractUser):
 
 class Lot(models.Model):
     CATEGORIES = [(None, "No category"),
-        ('EL', 'Electronics'),
-        ('FS', 'Fashion'),
-        ('HM', 'Home'),
-        ('TY', 'Toys'),
-        ('AR', 'Art'),]
+        ('Electronics', 'Electronics'),
+        ('Fashion', 'Fashion'),
+        ('Home', 'Home'),
+        ('Toys', 'Toys'),
+        ('Art', 'Art'),]
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=300)
     price = models.PositiveIntegerField()
@@ -22,6 +22,7 @@ class Lot(models.Model):
     status = models.CharField(max_length=100, default="Active")
     watching = models.ManyToManyField(User, blank=True, related_name="watchlist")
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="lots")
+    winner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, default=None)
 
 class Bid(models.Model):
     buyer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_bids")

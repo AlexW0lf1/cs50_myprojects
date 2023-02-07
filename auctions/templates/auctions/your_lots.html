@@ -1,0 +1,21 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <h2>Your Listings</h2>
+
+    {% for lot in lots %}
+    <h2>Listing: {{ lot.title }}</h2>
+    {% if lot.image %}
+    <img class="image" src="{{ lot.image.url }}" alt="No image">
+    {% else %}
+    <img class="image" src="{% static 'images/no.jpg' %}" alt="No image">
+    {% endif %}
+    <div class="description">
+        <p>
+            {{ lot.description }}
+        </p>
+    </div>
+    <p class="price">Price: ${{lot.price}}</p>
+    {% endfor %}
+{% endblock %}

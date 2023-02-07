@@ -114,14 +114,15 @@ def new(request):
     })
 
 def listing(request, lot_id):
+    lot = Lot.objects.get(pk=lot_id)
+    message = ""
     if request.method == "POST":
         if request.POST.get("price"):
             form = NewBidForm(request.POST)
             if form.is_valid():
-                print("OK")
                 new_bid = form.save(commit=False)
                 new_bid.buyer = request.user
-                new_bid.lot = Lot.objects.get(pk=lot_id)
+                new_bid.lot = lot
                 try:
                     new_bid.save()
                 except ValidationError:
@@ -130,8 +131,6 @@ def listing(request, lot_id):
                     })
 
             else:
-                print("Nope")
-                lot = Lot.objects.get(pk=lot_id)
                 bids = lot.bids.all()
                 comments = lot.comments.all()
                 return render(request, "auctions/lot.html", {
@@ -150,7 +149,6 @@ def listing(request, lot_id):
                new_comment.lot = Lot.objects.get(pk=lot_id)
                new_comment.save()
             else:
-                lot = Lot.objects.get(pk=lot_id)
                 bids = lot.bids.all()
                 comments = lot.comments.all()
                 return render(request, "auctions/lot.html", {
@@ -160,9 +158,13 @@ def listing(request, lot_id):
                     "form_bid": NewBidForm(),
                     "form_comment": NewCommentForm(request.POST),
                 })
-
-    lot = Lot.objects.get(pk=lot_id)
+        if request.POST.get("close") and request.user == Lot.objects.get(pk=lot_id).seller:
+            lot.status = "Closed"
+            if lot.bids:
+                lot.winner = lot.bids.last().buyer
     if lot:
+        if lot.status == 'Closed' and request.user == lot.seller:
+            message = "You sold that listing for $" + lot.price
         bids = lot.bids.all()
         comments = lot.comments.all()
         return render(request, "auctions/lot.html", {
@@ -171,6 +173,7 @@ def listing(request, lot_id):
             "comments": comments,
             "form_bid": NewBidForm(),
             "form_comment": NewCommentForm(),
+            "message": message,
         })
     else:
         return render(request, "auctions/error.html", {
@@ -190,5 +193,15 @@ def watchlist_view(request):
 def category_view(request, category):
     lots = Lot.objects.filter(category=category, status="Active")
     return render(request, "auctions/category.html", {
+        "lots": lots,
+        "category": category,
+    })
+
+
+def your_listings(request):
+    user = request.user
+    lots = user.lots.all()
+    print(lots)
+    return render(request, "auctions/your_lots.html", {
         "lots": lots,
     })

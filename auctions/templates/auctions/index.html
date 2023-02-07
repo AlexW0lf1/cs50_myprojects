@@ -1,9 +1,37 @@
 {% extends "auctions/layout.html" %}
+{% load static %}
 
 {% block body %}
     <h2>Active Listings</h2>
 
     {% for lot in lots %}
-    <h2>{{ lot.title }}</h2>
+    <h2>Listing: {{ lot.title }} {% if lot.seller == user %} (Yours) {% endif %}</h2>
+    {% if user in lot.watching %}
+    <div class="tag">Watchlist</div>
+    <!-- Remove from Watchlist -->
+    <form action="{% url 'watchlist' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" value="remove" name="remove">
+        <input type="submit" value="Remove from Watchlist">
+    </form>
+    {% else %}
+    <!-- Add to Watchlist -->
+    <form action="{% url 'watchlist' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" value="add" name="add">
+        <input type="submit" value="Add to Watchlist">
+    </form>
+    {% endif %}
+    {% if lot.image %}
+    <img class="image" src="{{ lot.image.url }}" alt="No image">
+    {% else %}
+    <img class="image" src="{% static 'images/no.jpg' %}" alt="No image">
+    {% endif %}
+    <div class="description">
+        <p>
+            {{ lot.description }}
+        </p>
+    </div>
+    <p class="price">Price: ${{lot.price}}</p>
     {% endfor %}
 {% endblock %}
