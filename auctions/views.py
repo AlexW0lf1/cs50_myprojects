@@ -14,18 +14,29 @@ class NewLotForm(forms.ModelForm):
     class Meta:
         model = Lot
         fields = ['title', 'description', 'price', 'image', 'category']
+        labels = {f: '' for f in fields if f != 'image'}
+        widgets = { f: forms.TextInput(attrs={'placeholder': f.title()}) for f in fields if f not in ['price', 'image', 'category']}
+        widgets['price'] = forms.NumberInput(attrs={'placeholder': 'Price $'})
 
 
 class NewBidForm(forms.ModelForm):
     class Meta:
         model = Bid
         fields = ['price',]
+        labels = {'price': ''}
+        widgets = {
+            'price': forms.NumberInput(attrs={'placeholder': 'Bid'}),
+        }
 
 
 class NewCommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['comment',]
+        labels = {'comment': ''}
+        widgets = {
+            'comment': forms.Textarea(attrs={'placeholder': 'Comment'}),
+        }
 
 
 def index(request):
@@ -162,9 +173,10 @@ def listing(request, lot_id):
             lot.status = "Closed"
             if lot.bids:
                 lot.winner = lot.bids.last().buyer
+            lot.save()
     if lot:
         if lot.status == 'Closed' and request.user == lot.seller:
-            message = "You sold that listing for $" + lot.price
+            message = "You sold that listing for $" + str(lot.price)
         bids = lot.bids.all()
         comments = lot.comments.all()
         return render(request, "auctions/lot.html", {

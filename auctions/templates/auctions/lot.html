@@ -2,98 +2,127 @@
 {% load static %}
 
 {% block body %}
-    {% if lot.winner == user %}
-    <h1 class="winner">Congratulations! This listing is yours!</h1>
-    {% endif %}
-    {% if message %}
-    <h1>{{message}}</h1>
-    {% endif %}
-    <h2>Listing: {{ lot.title }} {% if lot.seller == user %} (Yours) {% endif %}</h2>
-    {% if user in lot.watching %}
-    <div class="tag">Watchlist</div>
-    <!-- Remove from Watchlist -->
-    <form action="{% url 'watchlist' %}" method="post">
-        {% csrf_token %}
-        <input type="hidden" value="remove" name="remove">
-        <input type="hidden" value="{{lot.id}}" name="lot_id">
-        <input type="submit" value="Remove from Watchlist">
-    </form>
-    {% else %}
-    <!-- Add to Watchlist -->
-    <form action="{% url 'watchlist' %}" method="post">
-        {% csrf_token %}
-        <input type="hidden" value="add" name="add">
-        <input type="hidden" value="{{lot.id}}" name="lot_id">
-        <input type="submit" value="Add to Watchlist">
-    </form>
-    {% endif %}
-    {% if lot.image %}
-    <img class="image" src="{{ lot.image.url }}" alt="No image">
-    {% else %}
-    <img src="{% static 'images/no.jpg' %}" alt="No image">
-    {% endif %}
-    <div class="description">
-        <p>
-            {{ lot.description }}
-        </p>
-    </div>
-    <div class="created">{{lot.created}}</div>
-    <p class="price">Price: ${{lot.price}}</p>
-    {% if user.is_authenticated %}
-    {% if lot.seller != user %}
-    <form action="{% url 'listing' lot.id %}" method="post">
-        {% csrf_token %}
-        {{form_bid.as_div}}
-        <input type="submit" value="Place Bid">
-    </form>
-    {% endif %}
-    {% endif %}
-    {% if lot.seller == user %}
-
-    <!-- Close Listing -->
-    <form action="{% url 'listing' lot.id %}" method="post">
-        {% csrf_token %}
-        <input type="hidden" value="close" name="close">
-        <input type="submit" value="Close Listing">
-    </form>
-    <div class="bids">
-        <h3>Bids history</h3>
-        {% for bid in bids %}
-        <div class="user">{{ bid.buyer }}</div>
-        <div class="price">${{bid.price}}</div>
-        {% empty %}
-        <h4>No Bids</h4>
-        {% endfor %}
-    </div>
-    {% endif %}
-    <div class="details">
-        <h3>Details</h3>
-        <ul>
-            <li>Listed by {{ lot.seller.username }}</li>
-            {% if lot.category %}
-            <li>Category: {{lot.category}}</li>
-            {% else %}
-            <li>No category</li>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-12">
+            {% if lot.winner == user %}
+            <h1 class="winner">Congratulations! This listing is yours!</h1>
             {% endif %}
-            <li>Status: {{ lot.status }}</li>
-            <li>Bids: {{bids|length}}</li>
-        </ul>
-    </div>
-    <div class="comments">
-        <h3>Comments</h3>
-        {% for comment in comments %}
-        <div class="user">{{ comment.author }} {% if comment.author.pk == lot.seller.pk %}(Seller) {% endif %}</div>
-        <div class="comment">{{ comment.comment }}</div>
-        {% empty %}
-        <h4>No Comments</h4>
-        {% endfor %}
-    </div>
-    {% if user.is_authenticated %}
-    <form action="{% url 'listing' lot.id %}" method="post">
-        {% csrf_token %}
-        {{form_comment.as_div}}
-        <input type="submit" value="Comment">
-    </form>
-    {% endif %}
-  
+            {% if message %}
+            <h1>{{message}}</h1>
+            {% endif %}
+            <h2>Listing: {{ lot.title }} {% if lot.seller == user %} (Yours) {% endif %}</h2>
+		</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-4">
+            {% if user in lot.watching.all %}
+            <div class="tag">Watchlist</div>
+            <!-- Remove from Watchlist -->
+            <form action="{% url 'watchlist' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" value="remove" name="remove">
+                <input type="hidden" value="{{lot.id}}" name="lot_id">
+                <input type="submit" value="Remove from Watchlist">
+            </form>
+            {% else %}
+            <!-- Add to Watchlist -->
+            <form action="{% url 'watchlist' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" value="add" name="add">
+                <input type="hidden" value="{{lot.id}}" name="lot_id">
+                <input type="submit" value="Add to Watchlist">
+            </form>
+            {% endif %}
+            {% if lot.image %}
+            <img class="image" src="{{ lot.image.url }}" alt="No image">
+            {% else %}
+            <img src="{% static 'images/no.jpg' %}" alt="No image">
+            {% endif %}
+            <div class="description">
+                <p>
+                    {{ lot.description }}
+                </p>
+            </div>
+            <div class="created">{{lot.created}}</div>
+            <p class="price">Price: ${{lot.price}}</p>
+            <p>{{bids.all.count}} bid(s) so far</p>
+            {% if user.is_authenticated %}
+            {% if lot.seller != user %}
+            {% if bids.last.buyer == user %}
+            <p>Your bid is the current bid</p>
+            {% else %}
+            <form action="{% url 'listing' lot.id %}" method="post">
+                {% csrf_token %}
+                {{form_bid.as_div}}
+                <input type="submit" value="Place Bid">
+            </form>
+            {% endif %}
+            {% endif %}
+            {% endif %}
+            {% if lot.seller == user %}
+            {% if lot.status == 'Active' %}
+            <!-- Close Listing -->
+            <form action="{% url 'listing' lot.id %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" value="close" name="close">
+                <input type="submit" value="Close Listing">
+            </form>
+            {% endif %}
+            {% endif %}
+		</div>
+		<div class="col-md-8">
+			<div class="row">
+				<div class="col-md-6">
+                    <div class="details">
+                        <h3>Details</h3>
+                        <ul>
+                            <li>Listed by {{ lot.seller.username }}</li>
+                            {% if lot.category %}
+                            <li>Category: {{lot.category}}</li>
+                            {% else %}
+                            <li>No category</li>
+                            {% endif %}
+                            <li>Status: {{ lot.status }}</li>
+                            <li>Bids: {{bids|length}}</li>
+                        </ul>
+                    </div>
+				</div>
+				<div class="col-md-6">
+                    {% if lot.seller == user %}
+                    <div class="bids">
+                        <h3>Bids history</h3>
+                        {% for bid in bids %}
+                        <div class="bid">{{ bid.buyer }}: ${{bid.price}}</div>
+                        {% empty %}
+                        <h4>No Bids</h4>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+                    <div class="comments">
+                        <h3>Comments</h3>
+                        {% for comment in comments %}
+                        <div class="author">{{ comment.author }} {% if comment.author.pk == lot.seller.pk %}(Seller) {% endif %}</div>
+                        <div class="comment">{{ comment.comment }}</div>
+                        {% empty %}
+                        <h4>No Comments</h4>
+                        {% endfor %}
+                    </div>
+                    {% if user.is_authenticated %}
+                    <form action="{% url 'listing' lot.id %}" method="post">
+                        {% csrf_token %}
+                        {{form_comment.as_div}}
+                        <input type="submit" value="Comment">
+                    </form>
+                    {% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 {% endblock %}

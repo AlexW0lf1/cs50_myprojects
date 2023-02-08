@@ -13,7 +13,7 @@
             {% endif %}
             <div class="card-body">
                 <h4 class="card-title"><a href="{% url 'listing' lot.id %}"> Listing: {{ lot.title }} {% if lot.seller == user %} (Yours) {% endif %}</a></h2>
-                {% if user in lot.watching %}
+                {% if user in lot.watching.all %}
                 <div class="tag">Watchlist</div>
                 <!-- Remove from Watchlist -->
                 <form action="{% url 'watchlist' %}" method="post">
@@ -39,7 +39,11 @@
             </div>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">Price: ${{lot.price}}</li>
-                <li class="list-group-item">Category: {{lot.category}}</li>
+                {% if lot.category %}
+                <li class="list-group-item">Category: <a href="{% url 'category' lot.category %}">{{lot.category}}</a></li>
+                {% else %}
+                <li class="list-group-item">No category</li>
+                {% endif %}
             </ul>
             <div class="card-body">
                 <a href="{% url 'listing' lot.id %}" class="card-link">View</a>
@@ -49,35 +53,5 @@
             </div>
         </div>
         {% endfor %}
-    </div>
-
-    <!-- Card temporary code -->
-    <div class="card" style="width: 30rem;">
-        <img class="card-img-top" src="..." alt="Card image cap">
-        <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        </div>
-        <ul class="list-group list-group-flush">
-          <li class="list-group-item">Cras justo odio</li>
-          <li class="list-group-item">Dapibus ac facilisis in</li>
-          <li class="list-group-item">Vestibulum at eros</li>
-        </ul>
-        <div class="card-body">
-          <a href="#" class="card-link">Card link</a>
-          <a href="#" class="card-link">Another link</a>
-        </div>
-        <div class="card-footer text-muted">
-            2 days ago
-        </div>
-      </div>
-
-      <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-6">
-            </div>
-            <div class="col-md-6">
-            </div>
-        </div>
     </div>
 {% endblock %}
