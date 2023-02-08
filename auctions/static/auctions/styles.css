@@ -34,3 +34,11 @@ body {
 .author {
     font-weight: 600;
 }
+
+form input {
+    margin: 10px;
+}
+
+.main-info {
+    background-color: #ddd;
+}
