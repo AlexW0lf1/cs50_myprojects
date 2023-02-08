@@ -25,10 +25,16 @@ class Lot(models.Model):
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="lots")
     winner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, default=None)
 
+    def __str__(self) -> str:
+        return f"{self.title}, {self.seller}, {self.created}"
+
 class Bid(models.Model):
     buyer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_bids")
     lot = models.ForeignKey(Lot, on_delete=models.CASCADE, related_name="bids")
     price = models.PositiveIntegerField()
+
+    def __str__(self) -> str:
+        return f"{self.lot}, {self.buyer}, {self.price}"
 
     def save(self):
         lot = self.lot
@@ -46,3 +52,6 @@ class Comment(models.Model):
     comment = models.CharField(max_length=200)
     lot = models.ForeignKey(Lot, on_delete=models.CASCADE, related_name="comments")
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
+
+    def __str__(self) -> str:
+        return f"{self.lot}, {self.author}, {self.comment}"
