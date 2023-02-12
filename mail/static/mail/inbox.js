@@ -30,4 +30,55 @@ function load_mailbox(mailbox) {
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+
+  // Show emails
+  fetch(`/emails/${mailbox}`)
+  .then(response => response.json)
+  .then(emails.forEach(email => {
+    const element = () => {
+      return `<div><b>${email.sender}</b>${email.subject}<span>${email.timestamp}</span></div>`;
+    }
+    const id = email.id;
+    // Event listener to view email
+    element.addEventListener('click', function(id) {
+      document.querySelector('#emails-view').style.display = 'none';
+      document.querySelector('#email-view').style.display = 'block';
+      fetch(`/emails/${id}`)
+      .then(response => response.json)
+      .then(data => {
+        const e = () => {
+          return `<div><p><b>From:</b> ${data.sender}</p><p><b>To:</b> ${data.recipients}</p><p><b>Subject:</b> ${data.subject}</p><p><b>Timestamp:</b> ${data.timestamp}</p></div>`;
+        }
+        document.querySelector('#email.view').append(e);
+      })
+    });
+    document.querySelector('#emails-view').append(element);
+  }))
 }
+
+// Event listener for sending email
+document.querySelector('#compose-form').addEventListener('submit)', () => {
+  fetch('/emails/', {
+    method: 'POST',
+    body: JSON.stringify({
+      recipients: document.querySelector('#compose-recipients').innerHTML,
+      subject: document.querySelector('#compose-subject').innerHTML,
+      body: document.querySelector('#compose-body').innerHTML
+    })
+  })
+  .then(response => response.json)
+  .catch(() => {
+    element = document.querySelector('#message');
+    element.innerHTML = message.message;
+    element.style.display = 'block';
+    return Promise.reject(Error(response.status))
+  })
+  .then(message => {
+    load_mailbox('sent');
+    element = document.querySelector('#message');
+    element.innerHTML = message.message;
+    element.style.display = 'block';
+  })
+});
+
+//
