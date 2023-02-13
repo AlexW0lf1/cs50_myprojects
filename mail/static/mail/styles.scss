@@ -1,0 +1,32 @@
+
+$b : 1px solid black;
+$marg : 10px 0;
+$pad : 10px 10px;
+
+textarea {
+    min-height: 400px;
+}
+
+.pre {
+    white-space: pre-line;
+}
+
+.email-preview-white {
+    background-color: white;
+    border: $b;
+    margin: $marg;
+    padding: $pad;
+    b {
+        padding-right: 5%;
+    }
+    .timestamp {
+        float: right;
+        text-align: right;
+        color: #888;
+    }
+}
+
+.email-preview-gray {
+    @extend .email-preview-white;
+    background-color: #eee;
+}

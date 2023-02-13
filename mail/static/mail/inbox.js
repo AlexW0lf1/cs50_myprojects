@@ -79,7 +79,12 @@ function send_email() {
 // Get email
 function get_email(email) {
   const element = document.createElement('div');
-  element.innerHTML = `<div><b>${email.sender}</b>${email.subject}<span>${email.timestamp}</span></div>`;
+  if (email.read) {
+    element.innerHTML = `<div class="email-preview-gray"><b>${email.sender}</b>${email.subject}<span class="timestamp">${email.timestamp}</span></div>`;
+  }
+  else {
+    element.innerHTML = `<div class="email-preview-white"><b>${email.sender}</b>${email.subject}<span class="timestamp">${email.timestamp}</span></div>`;
+  }
   const id = parseInt(email.id);
   // Event listener to view email
   element.addEventListener('click', () => view_email(id));
@@ -95,7 +100,53 @@ function view_email(id) {
   .then(response => response.json())
   .then(data => {
     const element = document.createElement('div');
-    element.innerHTML = `<div><p><b>From:</b> ${data.sender}</p><p><b>To:</b> ${data.recipients}</p><p><b>Subject:</b> ${data.subject}</p><p><b>Timestamp:</b> ${data.timestamp}</p></div>`;
+    element.innerHTML = `<div><p><b>From:</b> ${data.sender}</p><p><b>To:</b> ${data.recipients}</p><p><b>Subject:</b> ${data.subject}</p><p><b>Timestamp:</b> ${data.timestamp}</p><p class="pre"> ${data.body} </p><button class="btn btn-sm btn-outline-primary">Reply</button></div>`;
+    element.querySelector('button').onclick = () => reply(data);
+    if (document.querySelector('#emails-view h3').innerHTML == 'Inbox') {
+      element.innerHTML += `<button id="archive" class="btn btn-sm btn-outline-primary">Archive</button>`
+      element.querySelector('#archive').onclick = () => archive(id);
+    } else if (document.querySelector('#emails-view h3').innerHTML == 'Archive') {
+      element.innerHTML += `<button id="archive" class="btn btn-sm btn-outline-primary">Unarchive</button>`
+      element.querySelector('#archive').onclick = () => unarchive(id);
+    }
     document.querySelector('#email-view').append(element);
+    // Mark email as read
+    fetch(`emails/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        read: true
+      })
+    })
     })
 };
+
+function reply(data) {
+  compose_email();
+  // Fill composition fields
+  document.querySelector('#compose-recipients').value = data.sender;
+  document.querySelector('#compose-subject').value = data.subject.includes('RE:') ? data.subject : `RE:${data.subject}`;
+  document.querySelector('#compose-body').value = `On ${data.timestamp} ${data.sender} wrote:\n ${data.body}\n`;
+}
+
+function archive(id) {
+  // Mark email as archived
+  fetch(`emails/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      archived: true
+    })
+  })
+  load_mailbox('inbox');
+}
+
+
+function unarchive(id) {
+  // Mark email as read
+  fetch(`emails/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      archived: false
+    })
+  })
+  load_mailbox('inbox');
+}

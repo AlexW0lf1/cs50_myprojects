@@ -1,3 +1,28 @@
 textarea {
-    min-height: 400px;
+  min-height: 400px;
 }
+
+.pre {
+  white-space: pre-line;
+}
+
+.email-preview-white, .email-preview-gray {
+  background-color: white;
+  border: 1px solid black;
+  margin: 10px 0;
+  padding: 10px 10px;
+}
+.email-preview-white b, .email-preview-gray b {
+  padding-right: 5%;
+}
+.email-preview-white .timestamp, .email-preview-gray .timestamp {
+  float: right;
+  text-align: right;
+  color: #888;
+}
+
+.email-preview-gray {
+  background-color: #eee;
+}
+
+/*# sourceMappingURL=styles.css.map */
