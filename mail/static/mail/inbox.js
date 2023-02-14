@@ -139,7 +139,9 @@ function archive(id) {
       archived: true
     })
   })
-  load_mailbox('inbox');
+  .then(response => {
+    load_mailbox('inbox');
+  })
 }
 
 
@@ -151,5 +153,7 @@ function unarchive(id) {
       archived: false
     })
   })
-  load_mailbox('inbox');
+  .then(response => {
+    load_mailbox('inbox');
+  })
 }
