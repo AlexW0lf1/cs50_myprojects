@@ -4,4 +4,6 @@
 * 2
 * 3
 
-[HTML](/wiki/HTML)
+## Checkout
+
+[HTML page](/wiki/HTML)
